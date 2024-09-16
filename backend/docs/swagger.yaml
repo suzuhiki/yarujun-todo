@@ -1,0 +1,53 @@
+definitions:
+  model.TaskEntity:
+    properties:
+      deadline:
+        type: string
+      memo:
+        type: string
+      title:
+        type: string
+    type: object
+  responses.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  responses.SuccessResponse:
+    properties:
+      data: {}
+    type: object
+info:
+  contact: {}
+  description: このswaggerはyarujunのAPIを定義しています。
+  license:
+    name: suzuhiki
+  title: gin-swagger todos
+  version: "1.0"
+paths:
+  /todos:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/responses.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.TaskEntity'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Todo一覧を配列で返す
+      tags:
+      - Todo
+swagger: "2.0"
