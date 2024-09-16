@@ -14,15 +14,6 @@ services:
       - ./database/init:/docker-entrypoint-initdb.d # DBを初期化
     ports:
       - ${DB_PORT}:5432
-  dbweb:
-    image: sosedoff/pgweb
-    container_name: pgweb
-    ports: 
-      - "8081:8081"
-    environment:
-      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/postgres?sslmode=disable
-    depends_on:
-      - db
 
 volumes:
   db-store:
