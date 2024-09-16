@@ -1,18 +1,4 @@
 services:
-  # golang
-  app:
-    container_name: ${APP_CONTAINER_NAME}
-    build: # ビルドに使うDockerファイルのパス
-      context: .
-      dockerfile: ./dockerfiles/app.Dockerfile
-    volumes: # マウント
-      - ./app:/usr/local/go/app
-      - .env:/usr/local/go/app/.env
-    tty: true # コンテナの永続化
-    depends_on:
-      - db
-    ports:
-      - ${APP_PORT}:3000
   # posttgresql
   db:
     container_name: ${DB_HOST}
@@ -25,7 +11,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - db-store:/var/lib/postgresql/data
-      - ./app/database/init:/docker-entrypoint-initdb.d # DBを初期化
+      - ./database/init:/docker-entrypoint-initdb.d # DBを初期化
     ports:
       - ${DB_PORT}:5432
   dbweb:
