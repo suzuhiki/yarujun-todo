@@ -3,9 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -52,6 +54,15 @@ func main() {
 		titles = append(titles, title)
 	}
 	fmt.Printf("%v", titles)
+
+	// start api server
+	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello, World!")
+	})
+
+	r.Run()
 }
 
 // .envを読み込む
