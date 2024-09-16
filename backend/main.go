@@ -1,11 +1,10 @@
 package main
 
 import (
-	"yarujun/app/cmd"
-
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
+	"yarujun/app/cmd"
 	_ "yarujun/docs"
 
 	_ "github.com/lib/pq"

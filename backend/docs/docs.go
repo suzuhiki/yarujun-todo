@@ -18,13 +18,10 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/todos": {
+        "/": {
             "get": {
                 "produces": [
                     "application/json"
-                ],
-                "tags": [
-                    "Todo"
                 ],
                 "summary": "Todo一覧を配列で返す",
                 "responses": {
@@ -42,6 +39,43 @@ const docTemplate = `{
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/definitions/model.TaskEntity"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/test": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "hello worldを返す",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/responses.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
                                             }
                                         }
                                     }

@@ -27,7 +27,7 @@ info:
   title: gin-swagger todos
   version: "1.0"
 paths:
-  /todos:
+  /:
     get:
       produces:
       - application/json
@@ -48,6 +48,25 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: Todo一覧を配列で返す
-      tags:
-      - Todo
+  /test:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/responses.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    type: string
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: hello worldを返す
 swagger: "2.0"
