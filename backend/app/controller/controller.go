@@ -27,3 +27,17 @@ func ShowAllTask(c *gin.Context) {
 func Test(c *gin.Context) {
 	c.String(http.StatusOK, "Hello, World!!!!!!!!")
 }
+
+// @Summary ログイン
+// @Tag 認証
+// @Produce  json
+// @Success 200 {object} responses.SuccessResponse{data=[]loginRequest}
+// @Failure 400 {object} responses.ErrorResponse
+// @Router /login [post]
+func login() {
+}
+
+type loginRequest struct {
+	Email    string `form:"email" json:"email" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}

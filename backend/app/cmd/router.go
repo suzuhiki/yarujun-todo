@@ -18,11 +18,12 @@ func GetRouter() *gin.Engine {
 
 	r := gin.Default()
 
-	r.GET("/", controller.ShowAllTask)
-
 	// 認証
 	r.POST("/login", jwtMiddleware.LoginHandler)
 	r.GET("/refresh_token", jwtMiddleware.RefreshHandler)
+
+	// 認証済みのみ
+	r.Use(jwtMiddleware.MiddlewareFunc()).GET("/", controller.ShowAllTask)
 
 	r.GET("/test", controller.Test)
 	return r

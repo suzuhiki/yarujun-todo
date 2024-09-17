@@ -1,4 +1,14 @@
 definitions:
+  controller.loginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
   model.TaskEntity:
     properties:
       deadline:
@@ -48,6 +58,27 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: Todo一覧を配列で返す
+  /login:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/responses.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/controller.loginRequest'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: ログイン
   /test:
     get:
       produces:
