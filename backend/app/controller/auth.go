@@ -1,4 +1,4 @@
-package cmd
+package controller
 
 import (
 	"time"
@@ -6,11 +6,6 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
-
-type loginRequest struct {
-	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
 
 func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 	jwtMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
@@ -35,7 +30,7 @@ func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 				return "", jwt.ErrFailedAuthentication
 			}
 
-			return l.Email, nil
+			return l.Id, nil
 		},
 	})
 
@@ -56,8 +51,8 @@ func (l loginRequest) isValid() bool {
 	// TODO : 一般的にはデータベースやストレージ、SaaSから取得する
 	passwords := map[string]string{
 		"admin@example.com": "admin",
-		"test@example.com":  "test",
+		"testaro":           "test",
 	}
 
-	return passwords[l.Email] == l.Password
+	return passwords[l.Id] == l.Password
 }

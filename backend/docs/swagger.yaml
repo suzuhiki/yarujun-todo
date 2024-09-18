@@ -2,14 +2,14 @@ basePath: /api/v1
 definitions:
   controller.loginRequest:
     properties:
-      email:
-        example: test@example.com
+      id:
+        example: testaro
         type: string
       password:
         example: test
         type: string
     required:
-    - email
+    - id
     - password
     type: object
   controller.loginResponse:

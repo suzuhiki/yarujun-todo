@@ -7,6 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func CreateAccount(c *gin.Context) {
+
+}
+
 // @Summary Todo一覧を配列で返す
 // @Tag 一覧画面
 // @Produce  json
@@ -51,7 +55,7 @@ func refresh_token() {
 }
 
 type loginRequest struct {
-	Email    string `form:"email" json:"email" binding:"required" example:"test@example.com"`
+	Id       string `form:"id" json:"id" binding:"required" example:"testaro"`
 	Password string `form:"password" json:"password" binding:"required" example:"test"`
 }
 
@@ -59,4 +63,9 @@ type loginResponse struct {
 	Code   int    `json:"code" example:"200"`
 	Expire string `json:"expier" example:"2024-09-20T03:12:53+09:00"`
 	Token  string `json:"token"`
+}
+
+type createAccountRequest struct {
+	Id       string `form:"id" json:"id" binding:"required" example:"testaro"`
+	Password string `form:"password" json:"password" binding:"required" example:"test"`
 }

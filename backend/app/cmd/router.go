@@ -11,7 +11,7 @@ import (
 
 // ginのルーターを設定
 func GetRouter() *gin.Engine {
-	jwtMiddleware, err := NewJwtMiddleware()
+	jwtMiddleware, err := controller.NewJwtMiddleware()
 
 	if err != nil {
 		log.Fatal(err)

@@ -150,13 +150,13 @@ const docTemplate = `{
         "controller.loginRequest": {
             "type": "object",
             "required": [
-                "email",
+                "id",
                 "password"
             ],
             "properties": {
-                "email": {
+                "id": {
                     "type": "string",
-                    "example": "test@example.com"
+                    "example": "testaro"
                 },
                 "password": {
                     "type": "string",
