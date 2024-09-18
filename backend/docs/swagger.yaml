@@ -1,13 +1,27 @@
+basePath: /api/v1
 definitions:
   controller.loginRequest:
     properties:
       email:
+        example: test@example.com
         type: string
       password:
+        example: test
         type: string
     required:
     - email
     - password
+    type: object
+  controller.loginResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      expier:
+        example: "2024-09-20T03:12:53+09:00"
+        type: string
+      token:
+        type: string
     type: object
   model.TaskEntity:
     properties:
@@ -37,7 +51,30 @@ info:
   title: gin-swagger todos
   version: "1.0"
 paths:
-  /:
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body param
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.loginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: ログイン
+  /tasks:
     get:
       produces:
       - application/json
@@ -58,43 +95,15 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: Todo一覧を配列で返す
-  /login:
-    post:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/responses.SuccessResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/controller.loginRequest'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: ログイン
   /test:
     get:
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Hello, World!!!!!!!!
           schema:
-            allOf:
-            - $ref: '#/definitions/responses.SuccessResponse'
-            - properties:
-                data:
-                  items:
-                    type: string
-                  type: array
-              type: object
+            type: string
         "400":
           description: Bad Request
           schema:

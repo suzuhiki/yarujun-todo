@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ginのルーターを設定
 func GetRouter() *gin.Engine {
 	jwtMiddleware, err := NewJwtMiddleware()
 
@@ -18,13 +19,16 @@ func GetRouter() *gin.Engine {
 
 	r := gin.Default()
 
-	// 認証
-	r.POST("/login", jwtMiddleware.LoginHandler)
-	r.GET("/refresh_token", jwtMiddleware.RefreshHandler)
+	api := r.Group("/api")
+	v1 := api.Group("/v1")
+	// ログイン
+	v1.POST("/login", jwtMiddleware.LoginHandler)
+	v1.GET("/test", controller.Test)
 
-	// 認証済みのみ
-	r.Use(jwtMiddleware.MiddlewareFunc()).GET("/", controller.ShowAllTask)
+	// 認証済みエンドポイント
+	auth := v1.Group("/auth").Use(jwtMiddleware.MiddlewareFunc())
+	auth.GET("/refresh_token", jwtMiddleware.RefreshHandler)
+	auth.GET("/tasks", controller.ShowAllTask)
 
-	r.GET("/test", controller.Test)
 	return r
 }

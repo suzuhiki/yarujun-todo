@@ -12,7 +12,7 @@ import (
 // @Produce  json
 // @Success 200 {object} responses.SuccessResponse{data=[]model.TaskEntity}
 // @Failure 400 {object} responses.ErrorResponse
-// @Router / [get]
+// @Router /tasks [get]
 func ShowAllTask(c *gin.Context) {
 	datas := model.GetAll()
 	c.JSON(200, datas)
@@ -21,7 +21,7 @@ func ShowAllTask(c *gin.Context) {
 // @Summary hello worldを返す
 // @Tag テスト
 // @Produce  json
-// @Success 200 {object} responses.SuccessResponse{data=[]string}
+// @Success 200 {string} string "Hello, World!!!!!!!!"
 // @Failure 400 {object} responses.ErrorResponse
 // @Router /test [get]
 func Test(c *gin.Context) {
@@ -30,14 +30,22 @@ func Test(c *gin.Context) {
 
 // @Summary ログイン
 // @Tag 認証
+// @Accept  json
 // @Produce  json
-// @Success 200 {object} responses.SuccessResponse{data=[]loginRequest}
+// @Param   body	  body    loginRequest     true      "body param"
+// @Success 200 {object} loginResponse
 // @Failure 400 {object} responses.ErrorResponse
 // @Router /login [post]
 func login() {
 }
 
 type loginRequest struct {
-	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
+	Email    string `form:"email" json:"email" binding:"required" example:"test@example.com"`
+	Password string `form:"password" json:"password" binding:"required" example:"test"`
+}
+
+type loginResponse struct {
+	Code   int    `json:"code" example:"200"`
+	Expire string `json:"expier" example:"2024-09-20T03:12:53+09:00"`
+	Token  string `json:"token"`
 }

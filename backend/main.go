@@ -19,6 +19,7 @@ type EMPLOYEE struct {
 // @version 1.0
 // @license.name suzuhiki
 // @description このswaggerはyarujunのAPIを定義しています。
+// @BasePath /api/v1
 func main() {
 	// start api server
 	r := cmd.GetRouter()

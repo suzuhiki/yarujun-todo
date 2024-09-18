@@ -18,7 +18,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
+        "/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "ログイン",
+                "parameters": [
+                    {
+                        "description": "body param",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.loginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.loginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks": {
             "get": {
                 "produces": [
                     "application/json"
@@ -55,43 +91,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/login": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "ログイン",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/responses.SuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/controller.loginRequest"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/test": {
             "get": {
                 "produces": [
@@ -100,24 +99,9 @@ const docTemplate = `{
                 "summary": "hello worldを返す",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Hello, World!!!!!!!!",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/responses.SuccessResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "type": "string"
                         }
                     },
                     "400": {
@@ -139,9 +123,27 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "test@example.com"
                 },
                 "password": {
+                    "type": "string",
+                    "example": "test"
+                }
+            }
+        },
+        "controller.loginResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "expier": {
+                    "type": "string",
+                    "example": "2024-09-20T03:12:53+09:00"
+                },
+                "token": {
                     "type": "string"
                 }
             }
@@ -184,7 +186,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "gin-swagger todos",
 	Description:      "このswaggerはyarujunのAPIを定義しています。",

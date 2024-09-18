@@ -55,8 +55,8 @@ func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 func (l loginRequest) isValid() bool {
 	// TODO : 一般的にはデータベースやストレージ、SaaSから取得する
 	passwords := map[string]string{
-		"admin@gmail.com": "admin",
-		"test@gmail.com":  "test",
+		"admin@example.com": "admin",
+		"test@example.com":  "test",
 	}
 
 	return passwords[l.Email] == l.Password
