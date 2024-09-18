@@ -10,9 +10,10 @@ import (
 // @Summary Todo一覧を配列で返す
 // @Tag 一覧画面
 // @Produce  json
+// @Security    BearerAuth
 // @Success 200 {object} responses.SuccessResponse{data=[]model.TaskEntity}
 // @Failure 400 {object} responses.ErrorResponse
-// @Router /tasks [get]
+// @Router /auth/tasks [get]
 func ShowAllTask(c *gin.Context) {
 	datas := model.GetAll()
 	c.JSON(200, datas)
@@ -37,6 +38,16 @@ func Test(c *gin.Context) {
 // @Failure 400 {object} responses.ErrorResponse
 // @Router /login [post]
 func login() {
+}
+
+// @Summary 認証情報の更新
+// @Tag 認証
+// @Produce  json
+// @Security    BearerAuth
+// @Success 200 {object} loginResponse
+// @Failure 400 {object} responses.ErrorResponse
+// @Router /auth/refresh_token [get]
+func refresh_token() {
 }
 
 type loginRequest struct {

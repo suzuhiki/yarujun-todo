@@ -45,12 +45,51 @@ definitions:
     type: object
 info:
   contact: {}
-  description: このswaggerはyarujunのAPIを定義しています。
+  description: このswaggerはyarujunのAPIを定義しています。 JWTトークンの前に"Bearer"を追加してください。
   license:
     name: suzuhiki
   title: gin-swagger todos
   version: "1.0"
 paths:
+  /auth/refresh_token:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.loginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 認証情報の更新
+  /auth/tasks:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/responses.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.TaskEntity'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Todo一覧を配列で返す
   /login:
     post:
       consumes:
@@ -74,27 +113,6 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: ログイン
-  /tasks:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/responses.SuccessResponse'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/model.TaskEntity'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: Todo一覧を配列で返す
   /test:
     get:
       produces:
@@ -109,4 +127,9 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: hello worldを返す
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
