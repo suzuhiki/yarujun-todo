@@ -2,6 +2,7 @@ package controller
 
 import (
 	"time"
+	"yarujun/app/model"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -48,11 +49,7 @@ func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 }
 
 func (l loginRequest) isValid() bool {
-	// TODO : 一般的にはデータベースやストレージ、SaaSから取得する
-	passwords := map[string]string{
-		"admin@example.com": "admin",
-		"testaro":           "test",
-	}
+	password := model.GetPassword(l.Name)
 
-	return passwords[l.Name] == l.Password
+	return password == l.Password
 }

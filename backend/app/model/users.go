@@ -24,3 +24,19 @@ func CreateAccount(name string, password string) {
 		fmt.Println(err)
 	}
 }
+
+func GetPassword(name string) (password string) {
+	db := database.SetupDatabase()
+	defer db.Close()
+
+	rows, err := db.Query("SELECT password FROM users WHERE name = $1", name)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var pass string
+	for rows.Next() {
+		rows.Scan(&pass)
+	}
+	return pass
+}
