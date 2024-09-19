@@ -22,7 +22,11 @@ func CreateAccount(c *gin.Context) {
 		return
 	}
 
-	model.CreateAccount(json.Name, json.Password)
+	err := model.CreateAccount(json.Name, json.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 }
 
