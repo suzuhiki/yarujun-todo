@@ -36,11 +36,18 @@ func CreateAccount(c *gin.Context) {
 // @Tag 一覧画面
 // @Produce  json
 // @Security    BearerAuth
+// @Param   user_id     query    string     true        "user_id"
 // @Success 200 {object} types.SuccessResponse{data=[]types.TaskEntity}
 // @Failure 400 {object} types.ErrorResponse
 // @Router /auth/tasks [get]
 func ShowAllTask(c *gin.Context) {
-	datas := model.GetAllTask()
+	user_id := c.Query("user_id")
+	if user_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user_id is required"})
+		return
+	}
+
+	datas := model.GetAllTask(user_id)
 	c.JSON(200, datas)
 }
 
@@ -49,6 +56,7 @@ func ShowAllTask(c *gin.Context) {
 // @Accept  json
 // @Security    BearerAuth
 // @Param   user_id     query    string     true        "user_id"
+// @Param   body	  body    types.CreateTaskRequest     true      "body param"
 // @Success 200 {object} types.CreateTaskRequest
 // @Failure 400 {object} types.ErrorResponse
 // @Router /auth/tasks [post]

@@ -83,6 +83,15 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "Todo一覧を配列で返す",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -130,6 +139,15 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "description": "body param",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateTaskRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -326,11 +344,11 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string",
-                    "example": "testaro"
+                    "example": "taro"
                 },
                 "password": {
                     "type": "string",
-                    "example": "test"
+                    "example": "tarodesu"
                 }
             }
         },

@@ -8,8 +8,8 @@ type TaskEntity struct {
 }
 
 type LoginRequest struct {
-	Name     string `form:"name" json:"name" binding:"required" example:"testaro"`
-	Password string `form:"password" json:"password" binding:"required" example:"test"`
+	Name     string `form:"name" json:"name" binding:"required" example:"taro"`
+	Password string `form:"password" json:"password" binding:"required" example:"tarodesu"`
 }
 
 type LoginResponse struct {

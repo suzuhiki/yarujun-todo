@@ -28,6 +28,7 @@ func GetRouter() *gin.Engine {
 	auth := v1.Group("/auth").Use(jwtMiddleware.MiddlewareFunc())
 	auth.GET("/refresh_token", jwtMiddleware.RefreshHandler)
 	auth.GET("/tasks", controller.ShowAllTask)
+	auth.POST("/tasks", controller.CreateTask)
 	auth.GET("/current_user", controller.GetCurrentUser)
 
 	return r

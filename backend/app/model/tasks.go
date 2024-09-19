@@ -6,11 +6,11 @@ import (
 	"yarujun/app/types"
 )
 
-func GetAllTask() (datas []types.TaskEntity) {
+func GetAllTask(user_id string) (datas []types.TaskEntity) {
 	db := database.SetupDatabase()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT title, memo, deadline, waitlist_num, work_time FROM tasks")
+	rows, err := db.Query("SELECT title, memo, deadline, waitlist_num FROM tasks WHERE user_id = $1", user_id)
 	if err != nil {
 		fmt.Println(err)
 	}
