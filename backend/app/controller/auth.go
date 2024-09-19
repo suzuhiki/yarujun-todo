@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"fmt"
 	"time"
 	"yarujun/app/model"
+	"yarujun/app/types"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -21,17 +23,17 @@ func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var l loginRequest
-
+			var l types.LoginRequest
 			if err := c.ShouldBind(&l); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
 
-			if !l.isValid() {
+			isValid, user_id := isValid(l)
+			if !isValid {
 				return "", jwt.ErrFailedAuthentication
 			}
 
-			return l.Name, nil
+			return user_id, nil
 		},
 	})
 
@@ -48,8 +50,10 @@ func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 	return jwtMiddleware, nil
 }
 
-func (l loginRequest) isValid() bool {
-	password := model.GetPassword(l.Name)
+func isValid(l types.LoginRequest) (bool, string) {
+	fmt.Println(l.Name)
+	password, user_id := model.GetLoginInfo(l.Name)
+	fmt.Println(password, user_id)
 
-	return password == l.Password
+	return password == l.Password, user_id
 }

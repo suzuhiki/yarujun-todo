@@ -18,6 +18,33 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/current_user": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "現在のユーザーidを返す",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.GetUserIdResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/refresh_token": {
             "get": {
                 "security": [
@@ -33,13 +60,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controller.loginResponse"
+                            "$ref": "#/definitions/types.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -62,7 +89,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/responses.SuccessResponse"
+                                    "$ref": "#/definitions/types.SuccessResponse"
                                 },
                                 {
                                     "type": "object",
@@ -70,7 +97,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/model.TaskEntity"
+                                                "$ref": "#/definitions/types.TaskEntity"
                                             }
                                         }
                                     }
@@ -81,7 +108,41 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "summary": "タスクを作成する",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.CreateTaskRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -103,7 +164,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.createAccountRequest"
+                            "$ref": "#/definitions/types.CreateAccountRequest"
                         }
                     }
                 ],
@@ -111,13 +172,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controller.createAccountResponse"
+                            "$ref": "#/definitions/types.CreateAccountResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -139,7 +200,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.loginRequest"
+                            "$ref": "#/definitions/types.LoginRequest"
                         }
                     }
                 ],
@@ -147,13 +208,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controller.loginResponse"
+                            "$ref": "#/definitions/types.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -175,7 +236,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
+                            "$ref": "#/definitions/types.ErrorResponse"
                         }
                     }
                 }
@@ -183,7 +244,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controller.createAccountRequest": {
+        "types.CreateAccountRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -200,7 +261,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.createAccountResponse": {
+        "types.CreateAccountResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -213,7 +274,50 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.loginRequest": {
+        "types.CreateTaskRequest": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "deadline": {
+                    "type": "string",
+                    "example": "2024-09-20T03:12:53+09:00"
+                },
+                "memo": {
+                    "type": "string",
+                    "example": "概要"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "やること"
+                },
+                "waitlist_num": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.GetUserIdResponse": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "string",
+                    "example": "1"
+                }
+            }
+        },
+        "types.LoginRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -230,7 +334,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.loginResponse": {
+        "types.LoginResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -246,7 +350,13 @@ const docTemplate = `{
                 }
             }
         },
-        "model.TaskEntity": {
+        "types.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {}
+            }
+        },
+        "types.TaskEntity": {
             "type": "object",
             "properties": {
                 "deadline": {
@@ -257,24 +367,10 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "responses.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
                 },
-                "message": {
+                "waitlist_num": {
                     "type": "string"
                 }
-            }
-        },
-        "responses.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "data": {}
             }
         }
     },

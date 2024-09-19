@@ -1,4 +1,4 @@
-package responses
+package types
 
 // SuccessResponse ...
 type SuccessResponse struct {

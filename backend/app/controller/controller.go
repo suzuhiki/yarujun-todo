@@ -3,7 +3,9 @@ package controller
 import (
 	"net/http"
 	"yarujun/app/model"
+	"yarujun/app/types"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,12 +13,12 @@ import (
 // @Tag 認証
 // @Accept  json
 // @Produce  json
-// @Param   body	  body    createAccountRequest     true      "body param"
-// @Success 200 {object} createAccountResponse
-// @Failure 400 {object} responses.ErrorResponse
+// @Param   body	  body    types.CreateAccountRequest     true      "body param"
+// @Success 200 {object} types.CreateAccountResponse
+// @Failure 400 {object} types.ErrorResponse
 // @Router /create_account [post]
 func CreateAccount(c *gin.Context) {
-	var json createAccountRequest
+	var json types.CreateAccountRequest
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -34,19 +36,62 @@ func CreateAccount(c *gin.Context) {
 // @Tag 一覧画面
 // @Produce  json
 // @Security    BearerAuth
-// @Success 200 {object} responses.SuccessResponse{data=[]model.TaskEntity}
-// @Failure 400 {object} responses.ErrorResponse
+// @Success 200 {object} types.SuccessResponse{data=[]types.TaskEntity}
+// @Failure 400 {object} types.ErrorResponse
 // @Router /auth/tasks [get]
 func ShowAllTask(c *gin.Context) {
-	datas := model.GetAll()
+	datas := model.GetAllTask()
 	c.JSON(200, datas)
+}
+
+// @Summary タスクを作成する
+// @Tag タスク
+// @Accept  json
+// @Security    BearerAuth
+// @Param   user_id     query    string     true        "user_id"
+// @Success 200 {object} types.CreateTaskRequest
+// @Failure 400 {object} types.ErrorResponse
+// @Router /auth/tasks [post]
+func CreateTask(c *gin.Context) {
+	var json types.CreateTaskRequest
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user_id := c.Query("user_id")
+	if user_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user_id is required"})
+		return
+	}
+
+	err := model.CreateTask(user_id, json)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+}
+
+// @Summary 現在のユーザーidを返す
+// @Tag ユーザー
+// @Produce  json
+// @Security    BearerAuth
+// @Success 200 {object} types.GetUserIdResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /auth/current_user [get]
+func GetCurrentUser(c *gin.Context) {
+	claims := jwt.ExtractClaims(c)
+	user_id := claims[jwt.IdentityKey].(string)
+	var result types.GetUserIdResponse
+	result.UserId = user_id
+	c.JSON(200, result)
 }
 
 // @Summary hello worldを返す
 // @Tag テスト
 // @Produce  json
 // @Success 200 {string} string "Hello, World!!!!!!!!"
-// @Failure 400 {object} responses.ErrorResponse
+// @Failure 400 {object} types.ErrorResponse
 // @Router /test [get]
 func Test(c *gin.Context) {
 	c.String(http.StatusOK, "Hello, World!!!!!!!!")
@@ -56,9 +101,9 @@ func Test(c *gin.Context) {
 // @Tag 認証
 // @Accept  json
 // @Produce  json
-// @Param   body	  body    loginRequest     true      "body param"
-// @Success 200 {object} loginResponse
-// @Failure 400 {object} responses.ErrorResponse
+// @Param   body	  body    types.LoginRequest     true      "body param"
+// @Success 200 {object} types.LoginResponse
+// @Failure 400 {object} types.ErrorResponse
 // @Router /login [post]
 func login() {
 }
@@ -67,29 +112,8 @@ func login() {
 // @Tag 認証
 // @Produce  json
 // @Security    BearerAuth
-// @Success 200 {object} loginResponse
-// @Failure 400 {object} responses.ErrorResponse
+// @Success 200 {object} types.LoginResponse
+// @Failure 400 {object} types.ErrorResponse
 // @Router /auth/refresh_token [get]
 func refresh_token() {
-}
-
-type loginRequest struct {
-	Name     string `form:"name" json:"name" binding:"required" example:"testaro"`
-	Password string `form:"password" json:"password" binding:"required" example:"test"`
-}
-
-type loginResponse struct {
-	Code   int    `json:"code" example:"200"`
-	Expire string `json:"expier" example:"2024-09-20T03:12:53+09:00"`
-	Token  string `json:"token"`
-}
-
-type createAccountRequest struct {
-	Name     string `form:"name" json:"name" binding:"required" example:"taro"`
-	Password string `form:"password" json:"password" binding:"required" example:"tarodesu"`
-}
-
-type createAccountResponse struct {
-	Code int    `json:"code" example:"200"`
-	Name string `form:"name" json:"name" example:"test"`
 }

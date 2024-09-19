@@ -3,17 +3,10 @@ package model
 import (
 	"fmt"
 	"yarujun/app/database"
+	"yarujun/app/types"
 )
 
-type TaskEntity struct {
-	Title        string
-	Memo         string
-	Deadline     string
-	waitlist_num string
-	work_time    string
-}
-
-func GetAll() (datas []TaskEntity) {
+func GetAllTask() (datas []types.TaskEntity) {
 	db := database.SetupDatabase()
 	defer db.Close()
 
@@ -22,18 +15,35 @@ func GetAll() (datas []TaskEntity) {
 		fmt.Println(err)
 	}
 
-	var tasks []TaskEntity
+	var tasks []types.TaskEntity
 	for rows.Next() {
 		var title string
 		var memo string
 		var deadline string
 		var waitlist_num string
-		var work_time string
 
-		rows.Scan(&title, &memo, &deadline, &waitlist_num, &work_time)
-		task := TaskEntity{Title: title, Memo: memo, Deadline: deadline, waitlist_num: waitlist_num, work_time: work_time}
+		rows.Scan(&title, &memo, &deadline, &waitlist_num)
+		task := types.TaskEntity{Title: title, Memo: memo, Deadline: deadline, Waitlist_num: waitlist_num}
 		tasks = append(tasks, task)
 	}
 	fmt.Printf("%v", tasks)
 	return tasks
+}
+
+func CreateTask(user_id string, data types.CreateTaskRequest) error {
+	db := database.SetupDatabase()
+	defer db.Close()
+
+	ins, err := db.Prepare("INSERT INTO tasks (user_id, title, memo, deadline, waitlist_num) VALUES ($1, $2, $3, $4, $5)")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_, err = ins.Exec(user_id, data.Title, data.Memo, data.Deadline, data.Waitlist_num)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
 }

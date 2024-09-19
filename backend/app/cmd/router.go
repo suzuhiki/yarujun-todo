@@ -3,8 +3,6 @@ package cmd
 import (
 	"log"
 	"yarujun/app/controller"
-	_ "yarujun/app/model"
-	_ "yarujun/app/responses"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,6 +28,7 @@ func GetRouter() *gin.Engine {
 	auth := v1.Group("/auth").Use(jwtMiddleware.MiddlewareFunc())
 	auth.GET("/refresh_token", jwtMiddleware.RefreshHandler)
 	auth.GET("/tasks", controller.ShowAllTask)
+	auth.GET("/current_user", controller.GetCurrentUser)
 
 	return r
 }

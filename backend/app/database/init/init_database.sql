@@ -14,7 +14,6 @@ CREATE TABLE tasks
     memo VARCHAR(255) NOT NULL,
     deadline TIMESTAMP with time zone NOT NULL,
     waitlist_num INT unique,
-    work_time INTERVAL DEFAULT '00:00:00',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade on update cascade
 );

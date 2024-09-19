@@ -5,11 +5,6 @@ import (
 	"yarujun/app/database"
 )
 
-type UserEntity struct {
-	Name     string
-	Password string
-}
-
 func CreateAccount(name string, password string) error {
 	db := database.SetupDatabase()
 	defer db.Close()
@@ -28,18 +23,22 @@ func CreateAccount(name string, password string) error {
 	return nil
 }
 
-func GetPassword(name string) (password string) {
+func GetLoginInfo(name string) (password string, user_id string) {
 	db := database.SetupDatabase()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT password FROM users WHERE name = $1", name)
+	rows, err := db.Query("SELECT password, id FROM users WHERE name = $1", name)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	var pass string
+	var id string
 	for rows.Next() {
-		rows.Scan(&pass)
+		rows.Scan(&pass, &id)
 	}
-	return pass
+	if pass == "" {
+		fmt.Println("not found")
+	}
+	return pass, id
 }

@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  controller.createAccountRequest:
+  types.CreateAccountRequest:
     properties:
       name:
         example: taro
@@ -12,7 +12,7 @@ definitions:
     - name
     - password
     type: object
-  controller.createAccountResponse:
+  types.CreateAccountResponse:
     properties:
       code:
         example: 200
@@ -21,7 +21,36 @@ definitions:
         example: test
         type: string
     type: object
-  controller.loginRequest:
+  types.CreateTaskRequest:
+    properties:
+      deadline:
+        example: "2024-09-20T03:12:53+09:00"
+        type: string
+      memo:
+        example: 概要
+        type: string
+      title:
+        example: やること
+        type: string
+      waitlist_num:
+        type: integer
+    required:
+    - title
+    type: object
+  types.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  types.GetUserIdResponse:
+    properties:
+      user_id:
+        example: "1"
+        type: string
+    type: object
+  types.LoginRequest:
     properties:
       name:
         example: testaro
@@ -33,7 +62,7 @@ definitions:
     - name
     - password
     type: object
-  controller.loginResponse:
+  types.LoginResponse:
     properties:
       code:
         example: 200
@@ -44,7 +73,11 @@ definitions:
       token:
         type: string
     type: object
-  model.TaskEntity:
+  types.SuccessResponse:
+    properties:
+      data: {}
+    type: object
+  types.TaskEntity:
     properties:
       deadline:
         type: string
@@ -52,17 +85,8 @@ definitions:
         type: string
       title:
         type: string
-    type: object
-  responses.ErrorResponse:
-    properties:
-      code:
-        type: integer
-      message:
+      waitlist_num:
         type: string
-    type: object
-  responses.SuccessResponse:
-    properties:
-      data: {}
     type: object
 info:
   contact: {}
@@ -72,6 +96,22 @@ info:
   title: gin-swagger todos
   version: "1.0"
 paths:
+  /auth/current_user:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.GetUserIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: 現在のユーザーidを返す
   /auth/refresh_token:
     get:
       produces:
@@ -80,11 +120,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controller.loginResponse'
+            $ref: '#/definitions/types.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/responses.ErrorResponse'
+            $ref: '#/definitions/types.ErrorResponse'
       security:
       - BearerAuth: []
       summary: 認証情報の更新
@@ -97,20 +137,41 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/responses.SuccessResponse'
+            - $ref: '#/definitions/types.SuccessResponse'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/model.TaskEntity'
+                    $ref: '#/definitions/types.TaskEntity'
                   type: array
               type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/responses.ErrorResponse'
+            $ref: '#/definitions/types.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Todo一覧を配列で返す
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.CreateTaskRequest'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: タスクを作成する
   /create_account:
     post:
       consumes:
@@ -121,18 +182,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.createAccountRequest'
+          $ref: '#/definitions/types.CreateAccountRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controller.createAccountResponse'
+            $ref: '#/definitions/types.CreateAccountResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/responses.ErrorResponse'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: アカウント作成
   /login:
     post:
@@ -144,18 +205,18 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.loginRequest'
+          $ref: '#/definitions/types.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controller.loginResponse'
+            $ref: '#/definitions/types.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/responses.ErrorResponse'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: ログイン
   /test:
     get:
@@ -169,7 +230,7 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/responses.ErrorResponse'
+            $ref: '#/definitions/types.ErrorResponse'
       summary: hello worldを返す
 securityDefinitions:
   BearerAuth:
