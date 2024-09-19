@@ -80,6 +80,42 @@
                 }
             }
         },
+        "/create_account": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "アカウント作成",
+                "parameters": [
+                    {
+                        "description": "body param",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.createAccountRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.createAccountResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "consumes": [
@@ -140,14 +176,44 @@
         }
     },
     "definitions": {
-        "controller.loginRequest": {
+        "controller.createAccountRequest": {
             "type": "object",
             "required": [
-                "id",
+                "name",
                 "password"
             ],
             "properties": {
-                "id": {
+                "name": {
+                    "type": "string",
+                    "example": "taro"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "tarodesu"
+                }
+            }
+        },
+        "controller.createAccountResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "name": {
+                    "type": "string",
+                    "example": "test"
+                }
+            }
+        },
+        "controller.loginRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "password"
+            ],
+            "properties": {
+                "name": {
                     "type": "string",
                     "example": "testaro"
                 },

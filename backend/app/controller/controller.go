@@ -7,7 +7,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary アカウント作成
+// @Tag 認証
+// @Accept  json
+// @Produce  json
+// @Param   body	  body    createAccountRequest     true      "body param"
+// @Success 200 {object} createAccountResponse
+// @Failure 400 {object} responses.ErrorResponse
+// @Router /create_account [post]
 func CreateAccount(c *gin.Context) {
+	var json createAccountRequest
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	model.CreateAccount(json.Name, json.Password)
 
 }
 
@@ -55,7 +70,7 @@ func refresh_token() {
 }
 
 type loginRequest struct {
-	Id       string `form:"id" json:"id" binding:"required" example:"testaro"`
+	Name     string `form:"name" json:"name" binding:"required" example:"testaro"`
 	Password string `form:"password" json:"password" binding:"required" example:"test"`
 }
 
@@ -66,6 +81,11 @@ type loginResponse struct {
 }
 
 type createAccountRequest struct {
-	Id       string `form:"id" json:"id" binding:"required" example:"testaro"`
-	Password string `form:"password" json:"password" binding:"required" example:"test"`
+	Name     string `form:"name" json:"name" binding:"required" example:"taro"`
+	Password string `form:"password" json:"password" binding:"required" example:"tarodesu"`
+}
+
+type createAccountResponse struct {
+	Code int    `json:"code" example:"200"`
+	Name string `form:"name" json:"name" example:"test"`
 }

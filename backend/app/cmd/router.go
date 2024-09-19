@@ -23,6 +23,7 @@ func GetRouter() *gin.Engine {
 	v1 := api.Group("/v1")
 	// ログイン
 	v1.POST("/login", jwtMiddleware.LoginHandler)
+	v1.POST("/create_account", controller.CreateAccount)
 	v1.GET("/test", controller.Test)
 
 	// 認証済みエンドポイント

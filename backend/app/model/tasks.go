@@ -15,6 +15,8 @@ type TaskEntity struct {
 
 func GetAll() (datas []TaskEntity) {
 	db := database.SetupDatabase()
+	defer db.Close()
+
 	rows, err := db.Query("SELECT title, memo, deadline, waitlist_num, work_time FROM tasks")
 	if err != nil {
 		fmt.Println(err)

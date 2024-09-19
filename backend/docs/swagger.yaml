@@ -1,15 +1,36 @@
 basePath: /api/v1
 definitions:
+  controller.createAccountRequest:
+    properties:
+      name:
+        example: taro
+        type: string
+      password:
+        example: tarodesu
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  controller.createAccountResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      name:
+        example: test
+        type: string
+    type: object
   controller.loginRequest:
     properties:
-      id:
+      name:
         example: testaro
         type: string
       password:
         example: test
         type: string
     required:
-    - id
+    - name
     - password
     type: object
   controller.loginResponse:
@@ -90,6 +111,29 @@ paths:
       security:
       - BearerAuth: []
       summary: Todo一覧を配列で返す
+  /create_account:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: body param
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.createAccountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.createAccountResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: アカウント作成
   /login:
     post:
       consumes:

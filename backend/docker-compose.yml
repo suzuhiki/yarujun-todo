@@ -11,7 +11,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - db-store:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d # DBを初期化
+      - ./app/database/init:/docker-entrypoint-initdb.d # DBを初期化
     ports:
       - ${DB_PORT}:5432
 

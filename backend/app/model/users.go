@@ -1,0 +1,26 @@
+package model
+
+import (
+	"fmt"
+	"yarujun/app/database"
+)
+
+type UserEntity struct {
+	Name     string
+	Password string
+}
+
+func CreateAccount(name string, password string) {
+	db := database.SetupDatabase()
+	defer db.Close()
+
+	ins, err := db.Prepare("INSERT INTO users (name, password) VALUES ($1, $2)")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	_, err = ins.Exec(name, password)
+	if err != nil {
+		fmt.Println(err)
+	}
+}

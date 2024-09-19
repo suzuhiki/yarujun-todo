@@ -30,7 +30,7 @@ func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 				return "", jwt.ErrFailedAuthentication
 			}
 
-			return l.Id, nil
+			return l.Name, nil
 		},
 	})
 
@@ -54,5 +54,5 @@ func (l loginRequest) isValid() bool {
 		"testaro":           "test",
 	}
 
-	return passwords[l.Id] == l.Password
+	return passwords[l.Name] == l.Password
 }
