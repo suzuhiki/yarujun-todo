@@ -24,6 +24,7 @@ class _TasksScreenState extends State<TasksScreen> {
           IconButton(icon: const Icon(Icons.filter_list), onPressed: () {}),
           IconButton(onPressed: () {}, icon: const Icon(Icons.sell))
         ],
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder(
         future: getTaskList(),
