@@ -52,7 +52,7 @@ class _TasksScreenState extends State<TasksScreen> {
               return ListView.builder(
                 itemCount: data.body.length,
                 itemBuilder: (context, index) {
-                  return ElevatedButton(
+                  return GestureDetector(
                     child: Card(
                       child: ListTile(
                         title: Text(data.body[index].title),
@@ -60,17 +60,20 @@ class _TasksScreenState extends State<TasksScreen> {
                         trailing: Text(data.body[index].deadline),
                       ),
                     ),
-                    onPressed: () {
+                    onTap: () {
                       showModalBottomSheet(
                         context: context,
                         builder: (context) {
                           return Container(
+                            height: 200,
+                            width: MediaQuery.sizeOf(context).width,
                             padding: const EdgeInsets.all(16),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(data.body[index].title),
-                                Text(data.body[index].description),
+                                Text(data.body[index].memo),
                                 Text(data.body[index].deadline),
                               ],
                             ),
