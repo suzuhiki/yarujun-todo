@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/home_screens.dart';
 import 'package:frontend/screens/login_screen.dart';
+import 'package:frontend/screens/tasks_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -12,13 +14,18 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "やる順 Todo",
       theme: ThemeData(
         primarySwatch: Colors.blue,
         textTheme: GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme),
         fontFamily: GoogleFonts.notoSans().fontFamily,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white30,
+        ),
       ),
-      home: const LoginScreen(),
+      home: Container(
+        child: SafeArea(child: HomeScreens()),
+        color: Colors.white,
+      ),
     );
   }
 }

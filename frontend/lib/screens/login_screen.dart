@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:frontend/screens/home_screens.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/global.dart';
+import 'package:frontend/screens/tasks_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -94,6 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text('ログインに成功しました。')));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreens()));
                             });
                           }
                         },
@@ -116,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final header = <String, String>{
       'Content-Type': 'application/json',
     };
-    final url = Uri.parse('$BaseURL/login');
+    final url = Uri.parse('$BaseURL/api/v1/login');
     final response = await http.post(url, body: body, headers: header);
 
     print(url);
