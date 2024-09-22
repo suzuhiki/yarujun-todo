@@ -96,6 +96,12 @@ const docTemplate = `{
                         "description": "deadline or waitlist_num",
                         "name": "sort",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "waitlist",
+                        "name": "filter",
+                        "in": "query"
                     }
                 ],
                 "responses": {

@@ -9,14 +9,20 @@ import (
 	"yarujun/app/types"
 )
 
-func GetAllTask(user_id string, sort string) (datas []types.ShowTaskResponse, return_err error) {
+func GetAllTask(user_id string, sort string, filter string) (datas []types.ShowTaskResponse, return_err error) {
 	db := database.SetupDatabase()
 	defer db.Close()
 
 	var rows *sql.Rows
 	var err error
+	if filter == "waitlist" {
+		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 AND waitlist_num IS NOT NULL ORDER BY waitlist_num", user_id)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
 
-	if sort == "deadline" {
+	} else if sort == "deadline" {
 		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 ORDER BY done, deadline, waitlist_num", user_id)
 		if err != nil {
 			fmt.Println(err)

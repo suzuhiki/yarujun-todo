@@ -166,6 +166,10 @@ paths:
         in: query
         name: sort
         type: string
+      - description: waitlist
+        in: query
+        name: filter
+        type: string
       produces:
       - application/json
       responses:
