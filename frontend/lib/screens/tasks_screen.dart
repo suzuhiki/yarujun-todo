@@ -83,7 +83,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 separatorBuilder: (context, index) => Divider(
                   indent: 0,
                   endIndent: 0,
-                  thickness: 1,
+                  thickness: 0,
                   height: 1,
                   color: Colors.grey[300],
                 ),
@@ -92,13 +92,13 @@ class _TasksScreenState extends State<TasksScreen> {
                   if (data.body[index].done) {
                     _cardColor = Colors.grey[300]!;
                   } else if (data.body[index].waitlistNum == 0) {
-                    _cardColor = Colors.red[300]!;
+                    _cardColor = const Color(0xFFaa72e2);
                   } else if (data.body[index].waitlistNum == 1) {
-                    _cardColor = Colors.red[200]!;
+                    _cardColor = const Color(0xFFbf95ea);
                   } else if (data.body[index].waitlistNum == 2) {
-                    _cardColor = Colors.red[100]!;
+                    _cardColor = const Color(0xFFd5b8f1);
                   } else if (data.body[index].waitlistNum > 2) {
-                    _cardColor = Colors.red[50]!;
+                    _cardColor = const Color(0xFFeadcf8);
                   } else {
                     _cardColor = Colors.white;
                   }
@@ -295,6 +295,9 @@ class _TasksScreenState extends State<TasksScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 16,
+                    ),
                     Form(
                       key: _formKey,
                       child: TextFormField(
@@ -356,23 +359,17 @@ class _TasksScreenState extends State<TasksScreen> {
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          child: Row(
-                            children: [
-                              Icon(Icons.calendar_month),
-                              Text(" ${_taskDate.month}/${_taskDate.day}"),
-                            ],
-                          ),
-                          onPressed: () {
-                            onPressedRaisedButton();
-                          },
-                        ),
-                        ElevatedButton(
-                            onPressed: () {},
-                            child: Icon(Icons.format_list_numbered)),
-                      ],
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      child: Row(
+                        children: [
+                          Icon(Icons.calendar_month),
+                          Text(" ${_taskDate.month}/${_taskDate.day}"),
+                        ],
+                      ),
+                      onPressed: () {
+                        onPressedRaisedButton();
+                      },
                     ),
                   ],
                 ),

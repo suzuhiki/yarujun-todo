@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/home_screens.dart';
-import 'package:frontend/screens/login_screen.dart';
-import 'package:frontend/screens/tasks_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const MainApp());
@@ -26,6 +25,14 @@ class MainApp extends StatelessWidget {
         child: SafeArea(child: HomeScreens()),
         color: Colors.white,
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale("ja", "JP"),
+      ],
     );
   }
 }

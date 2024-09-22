@@ -85,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onSaved: (value) {
                           _password = value!;
                         }),
+                    const SizedBox(height: 16),
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
@@ -114,6 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // ログイン処理 -> jwtトークンを取得
   Future<String> login(String id, String password) async {
     final body = jsonEncode(<String, String>{
       'name': id,

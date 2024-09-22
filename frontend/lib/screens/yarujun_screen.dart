@@ -82,6 +82,9 @@ class _YarujunScreenState extends State<YarujunScreen> {
                 itemCount: data.body.length,
                 itemBuilder: (context, index) {
                   return Container(
+                    color: data.body[index].done
+                        ? Colors.grey[300]
+                        : Colors.transparent,
                     key: Key(data.body[index].id.toString()),
                     child: ListTile(
                       title: Text(data.body[index].title),
