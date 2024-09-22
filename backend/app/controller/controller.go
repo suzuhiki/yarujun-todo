@@ -144,6 +144,34 @@ func PutDoneTask(c *gin.Context) {
 	}
 }
 
+// @Summary タスクを削除する
+// @Tag タスク
+// @Produce  json
+// @Security    BearerAuth
+// @Param   user_id     query    string     true        "user_id"
+// @Param   task_id     query    string     true        "task_id"
+// @Success 200 {object} types.SuccessResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /auth/tasks [delete]
+func DeleteTask(c *gin.Context) {
+	user_id := c.Query("user_id")
+	if user_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user_id is required"})
+		return
+	}
+	task_id := c.Query("task_id")
+	if task_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "task_id is required"})
+		return
+	}
+
+	err := model.DeleteTask(user_id, task_id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+}
+
 // @Summary hello worldを返す
 // @Tag テスト
 // @Produce  json

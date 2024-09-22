@@ -31,6 +31,7 @@ func GetRouter() *gin.Engine {
 	auth.POST("/tasks", controller.CreateTask)
 	auth.GET("/current_user", controller.GetCurrentUser)
 	auth.PUT("/tasks/status", controller.PutDoneTask)
+	auth.DELETE("/tasks", controller.DeleteTask)
 
 	return r
 }

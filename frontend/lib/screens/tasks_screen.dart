@@ -116,7 +116,32 @@ class _TasksScreenState extends State<TasksScreen> {
                         label: 'Set',
                       ),
                       SlidableAction(
-                        onPressed: (_) {},
+                        onPressed: (_) {
+                          deleteTask(data.body[index].id).then(
+                            (value) {
+                              if (value.statusCode != 200) {
+                                if (value.statusCode == 401) {
+                                  WidgetsBinding.instance.addPostFrameCallback(
+                                    (_) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginScreen()),
+                                      );
+                                    },
+                                  );
+                                  return const Center(
+                                      child: Text("Unauthorized"));
+                                } else {
+                                  return const Center(child: Text("Error"));
+                                }
+                              } else {
+                                setState(() {});
+                              }
+                            },
+                          );
+                        },
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
                         icon: Icons.delete,
@@ -475,6 +500,50 @@ class _TasksScreenState extends State<TasksScreen> {
       return ApiReturn(statusCode: 200, body: "Success");
     } else {
       throw Exception('Failed to create task');
+    }
+  }
+
+  // タスクの削除
+  Future<ApiReturn> deleteTask(String taskId) async {
+    if (Token == "") {
+      return ApiReturn(statusCode: 401, body: "Token is empty");
+    }
+
+    if (taskId == "") {
+      return ApiReturn(statusCode: 400, body: "taskId is empty");
+    }
+
+    if (UserID == "") {
+      await getUserId().then((value) {
+        if (value.statusCode == 200) {
+          UserID = value.body;
+        } else if (value.statusCode == 401) {
+          return ApiReturn(statusCode: 401, body: "Token is empty");
+        } else {
+          return ApiReturn(statusCode: value.statusCode, body: "Error");
+        }
+      });
+    }
+
+    final query = {
+      'user_id': UserID,
+      'task_id': taskId,
+    };
+    final header = <String, String>{
+      'Authorization': 'Bearer $Token',
+    };
+    final url = Uri.parse(
+        '$BaseURL/api/v1/auth/tasks?${Uri(queryParameters: query).query}');
+    final response = await http.delete(url, headers: header);
+
+    print(url);
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return ApiReturn(statusCode: 200, body: "Success");
+    } else {
+      throw Exception('Failed to delete task');
     }
   }
 }

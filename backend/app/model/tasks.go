@@ -108,3 +108,20 @@ func UpdateDoneTask(user_id string, task_id string, value bool) error {
 	}
 	return nil
 }
+
+func DeleteTask(user_id string, task_id string) error {
+	db := database.SetupDatabase()
+	defer db.Close()
+
+	ins, err := db.Prepare("DELETE FROM tasks WHERE user_id = $1 AND id = $2")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	_, err = ins.Exec(user_id, task_id)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
+}
