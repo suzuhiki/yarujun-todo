@@ -20,6 +20,7 @@
 フロントエンドはFlutter、バックエンドはGo、データベースはPostgreSQLを利用する。
 
 DBに初期に作成されるアカウントは `id: admin, pass: admin`
+
 JWTの秘密鍵はコードにベタ書きされている
 
 ### フロントエンド
@@ -34,11 +35,12 @@ JWTの秘密鍵はコードにベタ書きされている
 
 環境：MacにGoをインストールして利用
 
-実行コマンド：`air`
-Swaggerの更新： `swag init`
-DB起動： `docker compose up`
+- 実行コマンド：`air`
+- Swaggerの更新： `swag init`
+- DB起動： `docker compose up`
 ※DBの初期化は `docker compose down -v`
 
-テストAPI：http://localhost:8080/api/v1/test
-swagger：http://localhost:8080/swagger/index.html
+起動するポート
+- テストAPI：http://localhost:8080/api/v1/test
+- swagger：http://localhost:8080/swagger/index.html
 
