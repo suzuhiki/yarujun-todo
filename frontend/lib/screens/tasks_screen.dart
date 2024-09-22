@@ -93,61 +93,96 @@ class _TasksScreenState extends State<TasksScreen> {
                   if (data.body[index].done) {
                     _cardColor = Colors.grey[300]!;
                   } else if (data.body[index].waitlistNum == 0) {
-                    _cardColor = Colors.red[100]!;
+                    _cardColor = Colors.red[300]!;
                   } else if (data.body[index].waitlistNum == 1) {
                     _cardColor = Colors.red[200]!;
                   } else if (data.body[index].waitlistNum == 2) {
-                    _cardColor = Colors.red[300]!;
+                    _cardColor = Colors.red[100]!;
                   } else if (data.body[index].waitlistNum > 2) {
-                    _cardColor = Colors.red[400]!;
+                    _cardColor = Colors.red[50]!;
                   } else {
                     _cardColor = Colors.white;
                   }
 
+                  var _waitlistHasValue = data.body[index].waitlistNum != -1;
+
                   return Slidable(
                     key: UniqueKey(),
-                    endActionPane:
-                        ActionPane(motion: const StretchMotion(), children: [
-                      SlidableAction(
-                        onPressed: (_) {},
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        icon: Icons.format_list_numbered,
-                        label: 'Set',
-                      ),
-                      SlidableAction(
-                        onPressed: (_) {
-                          deleteTask(data.body[index].id).then(
-                            (value) {
-                              if (value.statusCode != 200) {
-                                if (value.statusCode == 401) {
-                                  WidgetsBinding.instance.addPostFrameCallback(
-                                    (_) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginScreen()),
+                    endActionPane: ActionPane(
+                      extentRatio: 0.5,
+                      motion: const StretchMotion(),
+                      children: [
+                        Visibility(
+                          visible: !_waitlistHasValue,
+                          child: SlidableAction(
+                            onPressed: (_) {
+                              addWaitlist(data.body[index].id).then(
+                                (value) {
+                                  if (value.statusCode != 200) {
+                                    if (value.statusCode == 401) {
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback(
+                                        (_) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const LoginScreen()),
+                                          );
+                                        },
                                       );
-                                    },
-                                  );
-                                  return const Center(
-                                      child: Text("Unauthorized"));
-                                } else {
-                                  return const Center(child: Text("Error"));
-                                }
-                              } else {
-                                setState(() {});
-                              }
+                                      return const Center(
+                                          child: Text("Unauthorized"));
+                                    } else {
+                                      return const Center(child: Text("Error"));
+                                    }
+                                  } else {
+                                    setState(() {});
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        icon: Icons.delete,
-                        label: 'Delete',
-                      ),
-                    ]),
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            icon: Icons.format_list_numbered,
+                            label: 'Set',
+                          ),
+                        ),
+                        SlidableAction(
+                          onPressed: (_) {
+                            deleteTask(data.body[index].id).then(
+                              (value) {
+                                if (value.statusCode != 200) {
+                                  if (value.statusCode == 401) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback(
+                                      (_) {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginScreen()),
+                                        );
+                                      },
+                                    );
+                                    return const Center(
+                                        child: Text("Unauthorized"));
+                                  } else {
+                                    return const Center(child: Text("Error"));
+                                  }
+                                } else {
+                                  setState(() {});
+                                }
+                              },
+                            );
+                          },
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        ),
+                      ],
+                    ),
                     child: GestureDetector(
                       child: Container(
                         color: _cardColor,
@@ -535,6 +570,50 @@ class _TasksScreenState extends State<TasksScreen> {
     final url = Uri.parse(
         '$BaseURL/api/v1/auth/tasks?${Uri(queryParameters: query).query}');
     final response = await http.delete(url, headers: header);
+
+    print(url);
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return ApiReturn(statusCode: 200, body: "Success");
+    } else {
+      throw Exception('Failed to delete task');
+    }
+  }
+
+  // タスクをwaitlistの末尾に追加
+  Future<ApiReturn> addWaitlist(String taskId) async {
+    if (Token == "") {
+      return ApiReturn(statusCode: 401, body: "Token is empty");
+    }
+
+    if (taskId == "") {
+      return ApiReturn(statusCode: 400, body: "taskId is empty");
+    }
+
+    if (UserID == "") {
+      await getUserId().then((value) {
+        if (value.statusCode == 200) {
+          UserID = value.body;
+        } else if (value.statusCode == 401) {
+          return ApiReturn(statusCode: 401, body: "Token is empty");
+        } else {
+          return ApiReturn(statusCode: value.statusCode, body: "Error");
+        }
+      });
+    }
+
+    final query = {
+      'user_id': UserID,
+      'task_id': taskId,
+    };
+    final header = <String, String>{
+      'Authorization': 'Bearer $Token',
+    };
+    final url = Uri.parse(
+        '$BaseURL/api/v1/auth/tasks/waitlist?${Uri(queryParameters: query).query}');
+    final response = await http.put(url, headers: header);
 
     print(url);
     print(response.statusCode);

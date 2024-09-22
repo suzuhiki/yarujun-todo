@@ -132,7 +132,24 @@ func AddWaitlist(user_id string, task_id string) error {
 	db := database.SetupDatabase()
 	defer db.Close()
 
-	ins, err := db.Prepare("SELECT MAX(waitlist_num) FROM tasks WHERE user_id = $1")
+	// 既にwaitlist_numが設定されているか確認
+	ins, err := db.Prepare("SELECT waitlist_num FROM tasks WHERE user_id = $1 AND id = $2")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	var waitlist_num sql.NullInt64
+	err = ins.QueryRow(user_id, task_id).Scan(&waitlist_num)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	if waitlist_num.Valid {
+		return errors.New("waitlist_num is already set")
+	}
+
+	// waitlist_numの最大値を取得
+	ins, err = db.Prepare("SELECT MAX(waitlist_num) FROM tasks WHERE user_id = $1")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -146,12 +163,13 @@ func AddWaitlist(user_id string, task_id string) error {
 
 	if max_waitlist_num.Valid {
 		if max_waitlist_num.Int64 == 9 {
+			// waitlist_numが9の場合は、既存のwaitlist_num==9のタスクをnullにセット
 			ins, err := db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE waitlist_num = 9 AND user_id = $2")
 			if err != nil {
 				fmt.Println(err)
 				return err
 			}
-			_, err = ins.Exec(-1, user_id)
+			_, err = ins.Exec(sql.NullInt32{}, user_id)
 			if err != nil {
 				fmt.Println(err)
 				return err
@@ -167,8 +185,8 @@ func AddWaitlist(user_id string, task_id string) error {
 				fmt.Println(err)
 				return err
 			}
-
 		} else {
+			// waitlist_numが9未満の場合は、waitlist_numを+1してセット
 			ins, err := db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE user_id = $2 AND id = $3")
 			if err != nil {
 				fmt.Println(err)
@@ -180,8 +198,8 @@ func AddWaitlist(user_id string, task_id string) error {
 				return err
 			}
 		}
-
 	} else {
+		// waitlist_numが設定されていない場合は、waitlist_num=0(リストの先頭)をセット
 		ins, err := db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE user_id = $2 AND id = $3")
 		if err != nil {
 			fmt.Println(err)
