@@ -114,7 +114,19 @@ func DeleteTask(user_id string, task_id string) error {
 	db := database.SetupDatabase()
 	defer db.Close()
 
-	ins, err := db.Prepare("DELETE FROM tasks WHERE user_id = $1 AND id = $2")
+	ins, err := db.Prepare("SELECT waitlist_num FROM tasks WHERE user_id = $1 AND id = $2")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	var waitlist_num sql.NullInt64
+	err = ins.QueryRow(user_id, task_id).Scan(&waitlist_num)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	ins, err = db.Prepare("DELETE FROM tasks WHERE user_id = $1 AND id = $2")
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -124,6 +136,21 @@ func DeleteTask(user_id string, task_id string) error {
 		fmt.Println(err)
 		return err
 	}
+
+	if waitlist_num.Valid {
+		// waitlistに含まれていた場合は、その番号より後ろのwaitlist_numを-1する
+		ins, err = db.Prepare("UPDATE tasks SET waitlist_num = waitlist_num - 1 WHERE user_id = $1 AND waitlist_num > $2")
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		_, err = ins.Exec(user_id, waitlist_num.Int64)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
+
 	return nil
 }
 
