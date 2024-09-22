@@ -19,15 +19,31 @@ class _TasksScreenState extends State<TasksScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String _taskTitle = "";
+  int _toggleSelected = 0;
 
   @override
   Widget build(BuildContext context) {
+    final List<bool> selected = [false, false];
+    selected[_toggleSelected] = true;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("タスク一覧"),
         actions: [
-          IconButton(icon: const Icon(Icons.filter_list), onPressed: () {}),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.sell))
+          ToggleButtons(
+            isSelected: selected,
+            onPressed: (int index) {
+              setState(() {
+                _toggleSelected = index;
+              });
+            },
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            children: const [
+              Icon(Icons.format_list_numbered),
+              Icon(Icons.calendar_today),
+            ],
+          ),
+          const SizedBox(width: 10),
         ],
         automaticallyImplyLeading: false,
       ),
