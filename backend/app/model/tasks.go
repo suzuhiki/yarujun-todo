@@ -246,3 +246,50 @@ func AddWaitlist(user_id string, task_id string) error {
 	}
 	return nil
 }
+
+// waitlist_numのすべてを更新する
+func ReorderWaitlist(user_id string, task_ids []int) error {
+	db := database.SetupDatabase()
+	defer db.Close()
+
+	ins, err := db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE user_id = $2 AND id = $3")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// waitlist_numをnullにセット
+	for _, task_id := range task_ids {
+		_, err = ins.Exec(sql.NullInt32{}, user_id, task_id)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
+
+	// waitlist_numがすべてnullになっているか確認
+	ins2, err2 := db.Prepare("SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND waitlist_num IS NOT NULL")
+	if err2 != nil {
+		fmt.Println(err2)
+		return err2
+	}
+	var count int
+	err2 = ins2.QueryRow(user_id).Scan(&count)
+	if err2 != nil {
+		fmt.Println(err2)
+		return err2
+	}
+	if count != 0 {
+		return errors.New("provided task_ids not include all tasks in waitlist")
+	}
+
+	// waitlist_numを更新
+	for i, task_id := range task_ids {
+		_, err = ins.Exec(i, user_id, task_id)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+	}
+
+	return nil
+}

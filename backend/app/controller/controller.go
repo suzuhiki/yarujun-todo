@@ -182,7 +182,7 @@ func DeleteTask(c *gin.Context) {
 // @Param   task_id     query    string     true        "task_id"
 // @Success 200 {object} types.SuccessResponse
 // @Failure 400 {object} types.ErrorResponse
-// @Router /auth/tasks/waitlist [put]
+// @Router /auth/tasks/waitlist/add [put]
 func AddWaitlist(c *gin.Context) {
 	user_id := c.Query("user_id")
 	if user_id == "" {
@@ -196,6 +196,35 @@ func AddWaitlist(c *gin.Context) {
 	}
 
 	err := model.AddWaitlist(user_id, task_id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+}
+
+// @Summary あるタスクのwaitlist_numを指定の位置に挿入する
+// @Tag タスク
+// @Produce  json
+// @Security    BearerAuth
+// @Param   user_id     query    string     true        "user_id"
+// @Param   body	  body    types.ReorderWaitlistRequest     true      "body param"
+// @Success 200 {object} types.SuccessResponse
+// @Failure 400 {object} types.ErrorResponse
+// @Router /auth/tasks/waitlist/reorder [put]
+func ReorderWaitlist(c *gin.Context) {
+	user_id := c.Query("user_id")
+	if user_id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user_id is required"})
+		return
+	}
+
+	var json types.ReorderWaitlistRequest
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := model.ReorderWaitlist(user_id, json.Ids)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

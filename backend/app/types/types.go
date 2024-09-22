@@ -39,6 +39,10 @@ type UpdateTaskStatusRequest struct {
 	Status *bool `form:"status" json:"status" validate:"required" example:true`
 }
 
+type ReorderWaitlistRequest struct {
+	Ids []int `form:"ids" json:"ids" validate:"required" example:[1,2,3]`
+}
+
 type GetUserIdResponse struct {
 	UserId string `json:"user_id" example:"1"`
 }

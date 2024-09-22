@@ -61,7 +61,6 @@ class _TasksScreenState extends State<TasksScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData) {
             var data = snapshot.data as ApiReturn;
-            print(data);
 
             if (data.statusCode != 200) {
               if (data.statusCode == 401) {
@@ -612,7 +611,7 @@ class _TasksScreenState extends State<TasksScreen> {
       'Authorization': 'Bearer $Token',
     };
     final url = Uri.parse(
-        '$BaseURL/api/v1/auth/tasks/waitlist?${Uri(queryParameters: query).query}');
+        '$BaseURL/api/v1/auth/tasks/waitlist/add?${Uri(queryParameters: query).query}');
     final response = await http.put(url, headers: header);
 
     print(url);

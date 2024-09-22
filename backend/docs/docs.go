@@ -269,7 +269,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/tasks/waitlist": {
+        "/auth/tasks/waitlist/add": {
             "put": {
                 "security": [
                     {
@@ -292,6 +292,42 @@ const docTemplate = `{
                         "type": "string",
                         "description": "task_id",
                         "name": "task_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/types.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/tasks/waitlist/reorder": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "あるタスクのwaitlist_numを指定の位置に挿入する",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
                         "in": "query",
                         "required": true
                     }
