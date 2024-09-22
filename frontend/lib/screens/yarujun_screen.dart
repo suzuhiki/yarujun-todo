@@ -88,7 +88,8 @@ class _YarujunScreenState extends State<YarujunScreen> {
                     key: Key(data.body[index].id.toString()),
                     child: ListTile(
                       title: Text(data.body[index].title),
-                      leading: Text(data.body[index].waitlistNum.toString(),
+                      leading: Text(
+                          (data.body[index].waitlistNum + 1).toString(),
                           style: const TextStyle(fontSize: 18)),
                       trailing: const Icon(Icons.drag_handle),
                     ),
