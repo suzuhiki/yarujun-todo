@@ -17,13 +17,13 @@ func GetAllTask(user_id string, sort string) (datas []types.ShowTaskResponse, re
 	var err error
 
 	if sort == "deadline" {
-		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 ORDER BY deadline", user_id)
+		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 ORDER BY done, deadline, waitlist_num", user_id)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err
 		}
 	} else if sort == "waitlist_num" {
-		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 ORDER BY waitlist_num", user_id)
+		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 ORDER BY done, waitlist_num, deadline", user_id)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err
