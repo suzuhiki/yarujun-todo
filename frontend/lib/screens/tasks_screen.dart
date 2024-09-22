@@ -16,6 +16,7 @@ class TasksScreen extends StatefulWidget {
 
 class _TasksScreenState extends State<TasksScreen> {
   DateTime _taskDate = new DateTime.now();
+  String _taskSort = "waitlist_num";
   final _formKey = GlobalKey<FormState>();
 
   String _taskTitle = "";
@@ -35,6 +36,11 @@ class _TasksScreenState extends State<TasksScreen> {
             onPressed: (int index) {
               setState(() {
                 _toggleSelected = index;
+                if (index == 0) {
+                  _taskSort = "waitlist_num";
+                } else {
+                  _taskSort = "deadline";
+                }
               });
             },
             borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -315,6 +321,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
     final query = {
       'user_id': UserID,
+      'sort': _taskSort,
     };
     final header = <String, String>{
       'Authorization': 'Bearer $Token',
