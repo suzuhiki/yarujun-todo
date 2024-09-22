@@ -3,10 +3,10 @@ definitions:
   types.CreateAccountRequest:
     properties:
       name:
-        example: taro
+        example: admin
         type: string
       password:
-        example: tarodesu
+        example: admin
         type: string
     required:
     - name
@@ -24,10 +24,7 @@ definitions:
   types.CreateTaskRequest:
     properties:
       deadline:
-        example: "2024-09-20T03:12:53+09:00"
-        type: string
-      memo:
-        example: 概要
+        example: "2024-09-20"
         type: string
       title:
         example: やること
@@ -35,6 +32,7 @@ definitions:
       waitlist_num:
         type: integer
     required:
+    - deadline
     - title
     type: object
   types.ErrorResponse:
@@ -53,10 +51,10 @@ definitions:
   types.LoginRequest:
     properties:
       name:
-        example: taro
+        example: admin
         type: string
       password:
-        example: tarodesu
+        example: admin
         type: string
     required:
     - name
@@ -68,25 +66,23 @@ definitions:
         example: 200
         type: integer
       expier:
-        example: "2024-09-20T03:12:53+09:00"
+        example: "2024-09-20"
         type: string
       token:
         type: string
     type: object
-  types.SuccessResponse:
-    properties:
-      data: {}
-    type: object
-  types.TaskEntity:
+  types.ShowTaskResponse:
     properties:
       deadline:
-        type: string
-      memo:
         type: string
       title:
         type: string
       waitlist_num:
         type: string
+    type: object
+  types.SuccessResponse:
+    properties:
+      data: {}
     type: object
 info:
   contact: {}
@@ -147,7 +143,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/types.TaskEntity'
+                    $ref: '#/definitions/types.ShowTaskResponse'
                   type: array
               type: object
         "400":

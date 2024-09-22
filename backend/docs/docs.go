@@ -106,7 +106,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/types.TaskEntity"
+                                                "$ref": "#/definitions/types.ShowTaskResponse"
                                             }
                                         }
                                     }
@@ -271,11 +271,11 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string",
-                    "example": "taro"
+                    "example": "admin"
                 },
                 "password": {
                     "type": "string",
-                    "example": "tarodesu"
+                    "example": "admin"
                 }
             }
         },
@@ -295,16 +295,13 @@ const docTemplate = `{
         "types.CreateTaskRequest": {
             "type": "object",
             "required": [
+                "deadline",
                 "title"
             ],
             "properties": {
                 "deadline": {
                     "type": "string",
-                    "example": "2024-09-20T03:12:53+09:00"
-                },
-                "memo": {
-                    "type": "string",
-                    "example": "概要"
+                    "example": "2024-09-20"
                 },
                 "title": {
                     "type": "string",
@@ -344,11 +341,11 @@ const docTemplate = `{
             "properties": {
                 "name": {
                     "type": "string",
-                    "example": "taro"
+                    "example": "admin"
                 },
                 "password": {
                     "type": "string",
-                    "example": "tarodesu"
+                    "example": "admin"
                 }
             }
         },
@@ -361,26 +358,17 @@ const docTemplate = `{
                 },
                 "expier": {
                     "type": "string",
-                    "example": "2024-09-20T03:12:53+09:00"
+                    "example": "2024-09-20"
                 },
                 "token": {
                     "type": "string"
                 }
             }
         },
-        "types.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "data": {}
-            }
-        },
-        "types.TaskEntity": {
+        "types.ShowTaskResponse": {
             "type": "object",
             "properties": {
                 "deadline": {
-                    "type": "string"
-                },
-                "memo": {
                     "type": "string"
                 },
                 "title": {
@@ -389,6 +377,12 @@ const docTemplate = `{
                 "waitlist_num": {
                     "type": "string"
                 }
+            }
+        },
+        "types.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {}
             }
         }
     },

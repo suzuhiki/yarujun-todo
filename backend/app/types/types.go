@@ -1,26 +1,25 @@
 package types
 
-type TaskEntity struct {
+type ShowTaskResponse struct {
 	Title        string
-	Memo         string
 	Deadline     string
 	Waitlist_num string
 }
 
 type LoginRequest struct {
-	Name     string `form:"name" json:"name" binding:"required" example:"taro"`
-	Password string `form:"password" json:"password" binding:"required" example:"tarodesu"`
+	Name     string `form:"name" json:"name" binding:"required" example:"admin"`
+	Password string `form:"password" json:"password" binding:"required" example:"admin"`
 }
 
 type LoginResponse struct {
 	Code   int    `json:"code" example:"200"`
-	Expire string `json:"expier" example:"2024-09-20T03:12:53+09:00"`
+	Expire string `json:"expier" example:"2024-09-20"`
 	Token  string `json:"token"`
 }
 
 type CreateAccountRequest struct {
-	Name     string `form:"name" json:"name" binding:"required" example:"taro"`
-	Password string `form:"password" json:"password" binding:"required" example:"tarodesu"`
+	Name     string `form:"name" json:"name" binding:"required" example:"admin"`
+	Password string `form:"password" json:"password" binding:"required" example:"admin"`
 }
 
 type CreateAccountResponse struct {
@@ -30,8 +29,7 @@ type CreateAccountResponse struct {
 
 type CreateTaskRequest struct {
 	Title        string `form:"title" json:"title" binding:"required" example:"やること"`
-	Memo         string `form:"memo" json:"memo" example:"概要"`
-	Deadline     string `form:"deadline" json:"deadline" example:"2024-09-20T03:12:53+09:00"`
+	Deadline     string `form:"deadline" json:"deadline" binding:"required" example:"2024-09-20"`
 	Waitlist_num int    `form:"waitlist_num" json:"waitlist_num" example:1`
 }
 

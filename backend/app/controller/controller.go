@@ -37,7 +37,7 @@ func CreateAccount(c *gin.Context) {
 // @Produce  json
 // @Security    BearerAuth
 // @Param   user_id     query    string     true        "user_id"
-// @Success 200 {object} types.SuccessResponse{data=[]types.TaskEntity}
+// @Success 200 {object} types.SuccessResponse{data=[]types.ShowTaskResponse}
 // @Failure 400 {object} types.ErrorResponse
 // @Router /auth/tasks [get]
 func ShowAllTask(c *gin.Context) {
