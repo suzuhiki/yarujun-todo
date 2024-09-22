@@ -38,6 +38,7 @@ func CreateAccount(c *gin.Context) {
 // @Produce  json
 // @Security    BearerAuth
 // @Param   user_id     query    string     true        "user_id"
+// @Param   sort     query    string     false        "deadline or waitlist_num"
 // @Success 200 {object} types.SuccessResponse{data=[]types.ShowTaskResponse}
 // @Failure 400 {object} types.ErrorResponse
 // @Router /auth/tasks [get]
@@ -47,8 +48,16 @@ func ShowAllTask(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user_id is required"})
 		return
 	}
+	sort := c.Query("sort")
+	if sort != "deadline" && sort != "waitlist_num" {
+		sort = "deadline"
+	}
 
-	datas := model.GetAllTask(user_id)
+	datas, err := model.GetAllTask(user_id, sort)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(200, datas)
 }
 

@@ -90,6 +90,12 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "deadline or waitlist_num",
+                        "name": "sort",
+                        "in": "query"
                     }
                 ],
                 "responses": {

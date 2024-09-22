@@ -136,6 +136,10 @@ paths:
         name: user_id
         required: true
         type: string
+      - description: deadline or waitlist_num
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:

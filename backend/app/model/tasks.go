@@ -9,13 +9,25 @@ import (
 	"yarujun/app/types"
 )
 
-func GetAllTask(user_id string) (datas []types.ShowTaskResponse) {
+func GetAllTask(user_id string, sort string) (datas []types.ShowTaskResponse, return_err error) {
 	db := database.SetupDatabase()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1", user_id)
-	if err != nil {
-		fmt.Println(err)
+	var rows *sql.Rows
+	var err error
+
+	if sort == "deadline" {
+		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 ORDER BY deadline", user_id)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+	} else if sort == "waitlist_num" {
+		rows, err = db.Query("SELECT id, title, deadline, done, waitlist_num FROM tasks WHERE user_id = $1 ORDER BY waitlist_num", user_id)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
 	}
 
 	var tasks []types.ShowTaskResponse
@@ -40,7 +52,7 @@ func GetAllTask(user_id string) (datas []types.ShowTaskResponse) {
 
 		tasks = append(tasks, task)
 	}
-	return tasks
+	return tasks, nil
 }
 
 func CreateTask(user_id string, data types.CreateTaskRequest) error {
