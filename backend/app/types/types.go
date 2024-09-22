@@ -1,6 +1,7 @@
 package types
 
 type ShowTaskResponse struct {
+	Id           string
 	Title        string
 	Deadline     string
 	Waitlist_num string

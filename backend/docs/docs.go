@@ -371,6 +371,9 @@ const docTemplate = `{
                 "deadline": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 },

@@ -13,26 +13,27 @@ func GetAllTask(user_id string) (datas []types.ShowTaskResponse) {
 	db := database.SetupDatabase()
 	defer db.Close()
 
-	rows, err := db.Query("SELECT title, deadline, waitlist_num FROM tasks WHERE user_id = $1", user_id)
+	rows, err := db.Query("SELECT id, title, deadline, waitlist_num FROM tasks WHERE user_id = $1", user_id)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	var tasks []types.ShowTaskResponse
 	for rows.Next() {
+		var id string
 		var title string
 		var deadline string
 		var waitlist_num sql.NullInt64
 		var task types.ShowTaskResponse
 
-		rows.Scan(&title, &deadline, &waitlist_num)
+		rows.Scan(&id, &title, &deadline, &waitlist_num)
 
 		deadline = deadline[:10]
 
 		if waitlist_num.Valid {
-			task = types.ShowTaskResponse{Title: title, Deadline: deadline, Waitlist_num: strconv.FormatInt(waitlist_num.Int64, 10)}
+			task = types.ShowTaskResponse{Id: id, Title: title, Deadline: deadline, Waitlist_num: strconv.FormatInt(waitlist_num.Int64, 10)}
 		} else {
-			task = types.ShowTaskResponse{Title: title, Deadline: deadline, Waitlist_num: ""}
+			task = types.ShowTaskResponse{Id: id, Title: title, Deadline: deadline, Waitlist_num: ""}
 		}
 
 		tasks = append(tasks, task)

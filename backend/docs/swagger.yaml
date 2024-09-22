@@ -75,6 +75,8 @@ definitions:
     properties:
       deadline:
         type: string
+      id:
+        type: string
       title:
         type: string
       waitlist_num:
