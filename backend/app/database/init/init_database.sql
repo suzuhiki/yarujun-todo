@@ -13,6 +13,7 @@ CREATE TABLE tasks
     title VARCHAR(255) NOT NULL,
     deadline DATE NOT NULL,
     waitlist_num INT unique,
+    done BOOLEAN DEFAULT FALSE,
     created_at DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (user_id) REFERENCES users(id) on delete cascade on update cascade
 );

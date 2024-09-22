@@ -5,6 +5,7 @@ type ShowTaskResponse struct {
 	Title        string
 	Deadline     string
 	Waitlist_num string
+	Done         bool
 }
 
 type LoginRequest struct {
