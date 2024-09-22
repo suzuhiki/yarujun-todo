@@ -114,6 +114,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     Form(
                       key: _formKey,
                       child: TextFormField(
+                        autofocus: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'タスク名を入力してください。';
@@ -127,7 +128,6 @@ class _TasksScreenState extends State<TasksScreen> {
                           hintText: '何をしますか？',
                           suffixIcon: IconButton(
                             onPressed: () {
-                              print("pressed");
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
                                 if (_taskTitle != "") {
@@ -153,6 +153,7 @@ class _TasksScreenState extends State<TasksScreen> {
                                               child: Text("Error"));
                                         }
                                       } else {
+                                        Navigator.of(context).pop();
                                         setState(() {});
                                       }
                                     },
