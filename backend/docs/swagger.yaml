@@ -71,6 +71,15 @@ definitions:
       token:
         type: string
     type: object
+  types.ReorderWaitlistRequest:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    required:
+    - ids
+    type: object
   types.ShowTaskResponse:
     properties:
       deadline:
@@ -90,7 +99,7 @@ definitions:
     type: object
 info:
   contact: {}
-  description: このswaggerはyarujunのAPIを定義しています。 JWTトークンの前に"Bearer"を追加してください。
+  description: このswaggerはyarujunのAPIを定義しています。 ログインapiから返されるJWTトークンの前に"Bearer"をつけて認証に利用してください。
   license:
     name: suzuhiki
   title: gin-swagger todos
@@ -285,6 +294,12 @@ paths:
         name: user_id
         required: true
         type: string
+      - description: body param
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/types.ReorderWaitlistRequest'
       produces:
       - application/json
       responses:

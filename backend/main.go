@@ -18,7 +18,7 @@ type EMPLOYEE struct {
 // @title gin-swagger todos
 // @version 1.0
 // @license.name suzuhiki
-// @description このswaggerはyarujunのAPIを定義しています。 JWTトークンの前に"Bearer"を追加してください。
+// @description このswaggerはyarujunのAPIを定義しています。 ログインapiから返されるJWTトークンの前に"Bearer"をつけて認証に利用してください。
 // @BasePath /api/v1
 // @securityDefinitions.apikey BearerAuth
 // @in                         header

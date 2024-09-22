@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"time"
 	"yarujun/app/model"
 	"yarujun/app/types"
@@ -51,9 +50,10 @@ func NewJwtMiddleware() (*jwt.GinJWTMiddleware, error) {
 }
 
 func isValid(l types.LoginRequest) (bool, string) {
-	fmt.Println(l.Name)
-	password, user_id := model.GetLoginInfo(l.Name)
-	fmt.Println(password, user_id)
+	password, user_id, err := model.GetLoginInfo(l.Name)
+	if err != nil {
+		return false, ""
+	}
 
 	return password == l.Password, user_id
 }

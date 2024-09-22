@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "このswaggerはyarujunのAPIを定義しています。 JWTトークンの前に\"Bearer\"を追加してください。",
+        "description": "このswaggerはyarujunのAPIを定義しています。 ログインapiから返されるJWTトークンの前に\"Bearer\"をつけて認証に利用してください。",
         "title": "gin-swagger todos",
         "contact": {},
         "license": {
@@ -323,6 +323,15 @@
                         "name": "user_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "description": "body param",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ReorderWaitlistRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -537,6 +546,20 @@
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "types.ReorderWaitlistRequest": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

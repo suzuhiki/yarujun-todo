@@ -330,6 +330,15 @@ const docTemplate = `{
                         "name": "user_id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "description": "body param",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.ReorderWaitlistRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -547,6 +556,20 @@ const docTemplate = `{
                 }
             }
         },
+        "types.ReorderWaitlistRequest": {
+            "type": "object",
+            "required": [
+                "ids"
+            ],
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "types.ShowTaskResponse": {
             "type": "object",
             "properties": {
@@ -590,7 +613,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "gin-swagger todos",
-	Description:      "このswaggerはyarujunのAPIを定義しています。 JWTトークンの前に\"Bearer\"を追加してください。",
+	Description:      "このswaggerはyarujunのAPIを定義しています。 ログインapiから返されるJWTトークンの前に\"Bearer\"をつけて認証に利用してください。",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
