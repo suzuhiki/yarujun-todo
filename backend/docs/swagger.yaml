@@ -246,6 +246,33 @@ paths:
       security:
       - BearerAuth: []
       summary: タスクを完了にする
+  /auth/tasks/waitlist:
+    put:
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: task_id
+        in: query
+        name: task_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: タスクをやる順リストの末尾に追加する
   /create_account:
     post:
       consumes:

@@ -109,6 +109,7 @@ func UpdateDoneTask(user_id string, task_id string, value bool) error {
 	return nil
 }
 
+// タスクの削除
 func DeleteTask(user_id string, task_id string) error {
 	db := database.SetupDatabase()
 	defer db.Close()
@@ -122,6 +123,75 @@ func DeleteTask(user_id string, task_id string) error {
 	if err != nil {
 		fmt.Println(err)
 		return err
+	}
+	return nil
+}
+
+// タスクをやる順リストの末尾に追加する
+func AddWaitlist(user_id string, task_id string) error {
+	db := database.SetupDatabase()
+	defer db.Close()
+
+	ins, err := db.Prepare("SELECT MAX(waitlist_num) FROM tasks WHERE user_id = $1")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	var max_waitlist_num sql.NullInt64
+	err = ins.QueryRow(user_id).Scan(&max_waitlist_num)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	if max_waitlist_num.Valid {
+		if max_waitlist_num.Int64 == 9 {
+			ins, err := db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE waitlist_num = 9 AND user_id = $2")
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+			_, err = ins.Exec(-1, user_id)
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+
+			ins, err = db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE user_id = $2 AND id = $3")
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+			_, err = ins.Exec(9, user_id, task_id)
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+
+		} else {
+			ins, err := db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE user_id = $2 AND id = $3")
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+			_, err = ins.Exec(max_waitlist_num.Int64+1, user_id, task_id)
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+		}
+
+	} else {
+		ins, err := db.Prepare("UPDATE tasks SET waitlist_num = $1 WHERE user_id = $2 AND id = $3")
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		_, err = ins.Exec(0, user_id, task_id)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 	}
 	return nil
 }
