@@ -22,6 +22,7 @@
 DBに初期に作成されるアカウントは `id: admin, pass: admin`
 
 JWTの秘密鍵はコードにベタ書きされている
+https://github.com/suzuhiki/yarujun-todo/blob/472e47f605c7cca39703135208cc4ad99ba0d46f/backend/app/controller/auth.go#L15
 
 ### フロントエンド
 `./frontend/`ディレクトリ以下に配置
