@@ -27,6 +27,8 @@ func GetAllTask(user_id string) (datas []types.ShowTaskResponse) {
 
 		rows.Scan(&title, &deadline, &waitlist_num)
 
+		deadline = deadline[:10]
+
 		if waitlist_num.Valid {
 			task = types.ShowTaskResponse{Title: title, Deadline: deadline, Waitlist_num: strconv.FormatInt(waitlist_num.Int64, 10)}
 		} else {
@@ -35,7 +37,6 @@ func GetAllTask(user_id string) (datas []types.ShowTaskResponse) {
 
 		tasks = append(tasks, task)
 	}
-	fmt.Printf("%v", tasks)
 	return tasks
 }
 

@@ -59,8 +59,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.isEmpty) {
                             return 'パスワードを入力してください。';
                           }
-                          if (value.length < 8) {
-                            return 'パスワードは8文字以上で入力してください。';
+                          if (value.length < 4) {
+                            return 'パスワードは4文字以上で入力してください。';
                           }
                           return null;
                         },

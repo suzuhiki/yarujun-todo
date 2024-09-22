@@ -1,22 +1,27 @@
 class Task {
   Task({
     required this.title,
-    required this.memo,
     required this.deadline,
-    this.waitlist_num = -1,
+    this.waitlistNum = -1,
   });
 
   final String title;
-  final String memo;
   final String deadline;
-  final int waitlist_num;
+  final int waitlistNum;
 
   factory Task.fromJson(dynamic json) {
-    return Task(
-      title: json['Title'] as String,
-      memo: json['Memo'] as String,
-      deadline: json['Deadline'] as String,
-      waitlist_num: int.parse(json['Waitlist_num'] as String),
-    );
+    if (json["Waitlist_num"] == "") {
+      return Task(
+        title: json['Title'] as String,
+        deadline: json['Deadline'] as String,
+        waitlistNum: -1,
+      );
+    } else {
+      return Task(
+        title: json['Title'] as String,
+        deadline: json['Deadline'] as String,
+        waitlistNum: int.parse(json['Waitlist_num'] as String),
+      );
+    }
   }
 }

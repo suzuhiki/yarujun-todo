@@ -38,6 +38,7 @@ class _TasksScreenState extends State<TasksScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasData) {
             var data = snapshot.data as ApiReturn;
+            print(data);
 
             if (data.statusCode != 200) {
               if (data.statusCode == 401) {
@@ -79,8 +80,8 @@ class _TasksScreenState extends State<TasksScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(data.body[index].title),
-                                Text(data.body[index].memo),
                                 Text(data.body[index].deadline),
+                                Text(data.body[index].waitlistNum.toString()),
                               ],
                             ),
                           );
@@ -92,7 +93,8 @@ class _TasksScreenState extends State<TasksScreen> {
               );
             }
           } else {
-            return const Center(child: Text("Error"));
+            print(snapshot.error);
+            return const Center(child: Text("タスクを表示できません"));
           }
         },
       ),
@@ -245,14 +247,13 @@ class _TasksScreenState extends State<TasksScreen> {
 
     if (response.statusCode == 200) {
       final List<dynamic> body = jsonDecode(response.body);
-      print(body);
-      return ApiReturn(
-          statusCode: 200,
-          body: body.map((dynamic json) => Task.fromJson(json)).toList());
+      final List<Task> tasks =
+          body.map((dynamic json) => Task.fromJson(json)).toList();
+      return ApiReturn(statusCode: 200, body: tasks);
     } else if (response.statusCode == 401) {
       return ApiReturn(statusCode: 401, body: "Unauthorized");
     } else {
-      return ApiReturn(statusCode: response.statusCode, body: "Error");
+      return ApiReturn(statusCode: response.statusCode, body: "Network Error");
     }
   }
 
@@ -282,10 +283,8 @@ class _TasksScreenState extends State<TasksScreen> {
     };
     final body = jsonEncode(<String, dynamic>{
       'title': _taskTitle,
-      'memo': "test",
-      'deadline':
-          "${_taskDate.year}-${_taskDate.month}-${_taskDate.day}T00:00:00+9:00",
-      'waitlist_num': 3,
+      'deadline': "${_taskDate.year}-${_taskDate.month}-${_taskDate.day}",
+      'waitlist_num': -1,
     });
     print(body);
     final url = Uri.parse(
