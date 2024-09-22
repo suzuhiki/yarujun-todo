@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:frontend/models/api_return.dart';
 import 'package:frontend/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
@@ -78,8 +79,15 @@ class _TasksScreenState extends State<TasksScreen> {
                 return const Center(child: Text("Error"));
               }
             } else {
-              return ListView.builder(
+              return ListView.separated(
                 itemCount: data.body.length,
+                separatorBuilder: (context, index) => Divider(
+                  indent: 0,
+                  endIndent: 0,
+                  thickness: 1,
+                  height: 1,
+                  color: Colors.grey[300],
+                ),
                 itemBuilder: (context, index) {
                   var _cardColor = Colors.white;
                   if (data.body[index].done) {
@@ -96,91 +104,112 @@ class _TasksScreenState extends State<TasksScreen> {
                     _cardColor = Colors.white;
                   }
 
-                  return GestureDetector(
-                    child: Card(
-                      color: _cardColor,
-                      child: ListTile(
-                        title: Text(data.body[index].title),
-                        leading: data.body[index].done
-                            ? Checkbox(
-                                value: true,
-                                onChanged: (value) {
-                                  putTaskStatus(data.body[index].id, false)
-                                      .then(
-                                    (value) {
-                                      if (value.statusCode != 200) {
-                                        if (value.statusCode == 401) {
-                                          WidgetsBinding.instance
-                                              .addPostFrameCallback(
-                                            (_) {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const LoginScreen()),
-                                              );
-                                            },
-                                          );
-                                          return const Center(
-                                              child: Text("Unauthorized"));
+                  return Slidable(
+                    key: UniqueKey(),
+                    endActionPane:
+                        ActionPane(motion: const StretchMotion(), children: [
+                      SlidableAction(
+                        onPressed: (_) {},
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        icon: Icons.format_list_numbered,
+                        label: 'Set',
+                      ),
+                      SlidableAction(
+                        onPressed: (_) {},
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                        label: 'Delete',
+                      ),
+                    ]),
+                    child: GestureDetector(
+                      child: Container(
+                        color: _cardColor,
+                        child: ListTile(
+                          title: Text(data.body[index].title),
+                          leading: data.body[index].done
+                              ? Checkbox(
+                                  value: true,
+                                  onChanged: (value) {
+                                    putTaskStatus(data.body[index].id, false)
+                                        .then(
+                                      (value) {
+                                        if (value.statusCode != 200) {
+                                          if (value.statusCode == 401) {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback(
+                                              (_) {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const LoginScreen()),
+                                                );
+                                              },
+                                            );
+                                            return const Center(
+                                                child: Text("Unauthorized"));
+                                          } else {
+                                            return const Center(
+                                                child: Text("Error"));
+                                          }
                                         } else {
-                                          return const Center(
-                                              child: Text("Error"));
+                                          setState(() {});
                                         }
-                                      } else {
-                                        setState(() {});
-                                      }
-                                    },
-                                  );
-                                },
-                              )
-                            : Checkbox(
-                                value: false,
-                                onChanged: (value) {
-                                  putTaskStatus(data.body[index].id, true).then(
-                                    (value) {
-                                      if (value.statusCode != 200) {
-                                        if (value.statusCode == 401) {
-                                          WidgetsBinding.instance
-                                              .addPostFrameCallback(
-                                            (_) {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const LoginScreen()),
-                                              );
-                                            },
-                                          );
-                                          return const Center(
-                                              child: Text("Unauthorized"));
+                                      },
+                                    );
+                                  },
+                                )
+                              : Checkbox(
+                                  value: false,
+                                  onChanged: (value) {
+                                    putTaskStatus(data.body[index].id, true)
+                                        .then(
+                                      (value) {
+                                        if (value.statusCode != 200) {
+                                          if (value.statusCode == 401) {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback(
+                                              (_) {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const LoginScreen()),
+                                                );
+                                              },
+                                            );
+                                            return const Center(
+                                                child: Text("Unauthorized"));
+                                          } else {
+                                            return const Center(
+                                                child: Text("Error"));
+                                          }
                                         } else {
-                                          return const Center(
-                                              child: Text("Error"));
+                                          setState(() {});
                                         }
-                                      } else {
-                                        setState(() {});
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                        trailing: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Builder(builder: (context) {
-                              if (data.body[index].waitlistNum == -1) {
-                                return const Text("-",
-                                    style: TextStyle(fontSize: 18));
-                              } else {
-                                return Text(
-                                    (data.body[index].waitlistNum + 1)
-                                        .toString(),
-                                    style: const TextStyle(fontSize: 18));
-                              }
-                            }),
-                            Text(data.body[index].deadline),
-                          ],
+                                      },
+                                    );
+                                  },
+                                ),
+                          trailing: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Builder(builder: (context) {
+                                if (data.body[index].waitlistNum == -1) {
+                                  return const Text("-",
+                                      style: TextStyle(fontSize: 18));
+                                } else {
+                                  return Text(
+                                      (data.body[index].waitlistNum + 1)
+                                          .toString(),
+                                      style: const TextStyle(fontSize: 18));
+                                }
+                              }),
+                              Text(data.body[index].deadline),
+                            ],
+                          ),
                         ),
                       ),
                     ),
