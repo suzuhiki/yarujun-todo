@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 	"yarujun/app/model"
 	"yarujun/app/types"
 
@@ -101,9 +102,10 @@ func GetCurrentUser(c *gin.Context) {
 // @Security    BearerAuth
 // @Param   user_id     query    string     true        "user_id"
 // @Param   task_id     query    string     true        "task_id"
+// @Param   status     query    bool     true        "status"
 // @Success 200 {object} types.SuccessResponse
 // @Failure 400 {object} types.ErrorResponse
-// @Router /auth/done_task [put]
+// @Router /auth/tasks/status [put]
 func PutDoneTask(c *gin.Context) {
 	user_id := c.Query("user_id")
 	if user_id == "" {
@@ -115,8 +117,18 @@ func PutDoneTask(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "task_id is required"})
 		return
 	}
+	status := c.Query("status")
+	if status == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "status is required"})
+		return
+	}
+	bool_status, err := strconv.ParseBool(status)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-	err := model.UpdateDoneTask(user_id, task_id)
+	err = model.UpdateDoneTask(user_id, task_id, bool_status)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

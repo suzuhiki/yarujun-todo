@@ -17,7 +17,7 @@ class Task {
     print(json);
     if (json["Waitlist_num"] == "") {
       return Task(
-        id: json['ID'] as String,
+        id: json['Id'] as String,
         title: json['Title'] as String,
         deadline: json['Deadline'] as String,
         waitlistNum: -1,

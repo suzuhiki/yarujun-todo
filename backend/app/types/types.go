@@ -35,6 +35,10 @@ type CreateTaskRequest struct {
 	Waitlist_num int    `form:"waitlist_num" json:"waitlist_num" example:1`
 }
 
+type UpdateTaskStatusRequest struct {
+	Status *bool `form:"status" json:"status" validate:"required" example:true`
+}
+
 type GetUserIdResponse struct {
 	UserId string `json:"user_id" example:"1"`
 }

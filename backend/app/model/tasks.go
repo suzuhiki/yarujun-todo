@@ -80,16 +80,16 @@ func CreateTask(user_id string, data types.CreateTaskRequest) error {
 	return nil
 }
 
-func UpdateDoneTask(user_id string, task_id string) error {
+func UpdateDoneTask(user_id string, task_id string, value bool) error {
 	db := database.SetupDatabase()
 	defer db.Close()
 
-	ins, err := db.Prepare("UPDATE tasks SET done = true WHERE user_id = $1 AND id = $2")
+	ins, err := db.Prepare("UPDATE tasks SET done = $1 WHERE user_id = $2 AND id = $3")
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
-	_, err = ins.Exec(user_id, task_id)
+	_, err = ins.Exec(value, user_id, task_id)
 	if err != nil {
 		fmt.Println(err)
 		return err

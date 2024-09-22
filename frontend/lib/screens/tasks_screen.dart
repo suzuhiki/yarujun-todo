@@ -63,7 +63,70 @@ class _TasksScreenState extends State<TasksScreen> {
                     child: Card(
                       child: ListTile(
                         title: Text(data.body[index].title),
-                        leading: Checkbox(value: false, onChanged: (value) {}),
+                        leading: data.body[index].done
+                            ? Checkbox(
+                                value: true,
+                                onChanged: (value) {
+                                  putTaskStatus(data.body[index].id, false)
+                                      .then(
+                                    (value) {
+                                      if (value.statusCode != 200) {
+                                        if (value.statusCode == 401) {
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback(
+                                            (_) {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoginScreen()),
+                                              );
+                                            },
+                                          );
+                                          return const Center(
+                                              child: Text("Unauthorized"));
+                                        } else {
+                                          return const Center(
+                                              child: Text("Error"));
+                                        }
+                                      } else {
+                                        setState(() {});
+                                      }
+                                    },
+                                  );
+                                },
+                              )
+                            : Checkbox(
+                                value: false,
+                                onChanged: (value) {
+                                  putTaskStatus(data.body[index].id, true).then(
+                                    (value) {
+                                      if (value.statusCode != 200) {
+                                        if (value.statusCode == 401) {
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback(
+                                            (_) {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoginScreen()),
+                                              );
+                                            },
+                                          );
+                                          return const Center(
+                                              child: Text("Unauthorized"));
+                                        } else {
+                                          return const Center(
+                                              child: Text("Error"));
+                                        }
+                                      } else {
+                                        setState(() {});
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
                         trailing: Text(data.body[index].deadline),
                       ),
                     ),
@@ -200,7 +263,7 @@ class _TasksScreenState extends State<TasksScreen> {
     );
   }
 
-// ボタン押下時のイベント
+  // 日付選択のボタン
   void onPressedRaisedButton() async {
     final picked = await showDatePicker(
             context: context,
@@ -216,6 +279,7 @@ class _TasksScreenState extends State<TasksScreen> {
     });
   }
 
+  // タスク一覧を取得
   Future<ApiReturn> getTaskList() async {
     if (Token == "") {
       return ApiReturn(statusCode: 401, body: "Token is empty");
@@ -258,6 +322,7 @@ class _TasksScreenState extends State<TasksScreen> {
     }
   }
 
+  // タスクを追加
   Future<ApiReturn> postTask() async {
     if (Token == "") {
       return ApiReturn(statusCode: 401, body: "Token is empty");
@@ -291,6 +356,53 @@ class _TasksScreenState extends State<TasksScreen> {
     final url = Uri.parse(
         '$BaseURL/api/v1/auth/tasks?${Uri(queryParameters: query).query}');
     final response = await http.post(url, body: body, headers: header);
+
+    print(url);
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return ApiReturn(statusCode: 200, body: "Success");
+    } else {
+      throw Exception('Failed to create task');
+    }
+  }
+
+  // タスクのステータスを更新
+  Future<ApiReturn> putTaskStatus(String taskId, bool isDone) async {
+    if (Token == "") {
+      return ApiReturn(statusCode: 401, body: "Token is empty");
+    }
+
+    if (taskId == "") {
+      return ApiReturn(statusCode: 400, body: "taskId is empty");
+    }
+
+    if (UserID == "") {
+      await getUserId().then((value) {
+        if (value.statusCode == 200) {
+          UserID = value.body;
+        } else if (value.statusCode == 401) {
+          return ApiReturn(statusCode: 401, body: "Token is empty");
+        } else {
+          return ApiReturn(statusCode: value.statusCode, body: "Error");
+        }
+      });
+    }
+
+    final query = {
+      'user_id': UserID,
+      'task_id': taskId,
+      'status': isDone.toString(),
+    };
+    final header = <String, String>{
+      'Authorization': 'Bearer $Token',
+      'Content-Type': 'application/json',
+    };
+    print(query);
+    final url = Uri.parse(
+        '$BaseURL/api/v1/auth/tasks/status?${Uri(queryParameters: query).query}');
+    final response = await http.put(url, headers: header);
 
     print(url);
     print(response.statusCode);
