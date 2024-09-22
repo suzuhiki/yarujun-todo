@@ -81,8 +81,24 @@ class _TasksScreenState extends State<TasksScreen> {
               return ListView.builder(
                 itemCount: data.body.length,
                 itemBuilder: (context, index) {
+                  var _cardColor = Colors.white;
+                  if (data.body[index].done) {
+                    _cardColor = Colors.grey[300]!;
+                  } else if (data.body[index].waitlistNum == 0) {
+                    _cardColor = Colors.red[100]!;
+                  } else if (data.body[index].waitlistNum == 1) {
+                    _cardColor = Colors.red[200]!;
+                  } else if (data.body[index].waitlistNum == 2) {
+                    _cardColor = Colors.red[300]!;
+                  } else if (data.body[index].waitlistNum > 2) {
+                    _cardColor = Colors.red[400]!;
+                  } else {
+                    _cardColor = Colors.white;
+                  }
+
                   return GestureDetector(
                     child: Card(
+                      color: _cardColor,
                       child: ListTile(
                         title: Text(data.body[index].title),
                         leading: data.body[index].done
@@ -149,30 +165,25 @@ class _TasksScreenState extends State<TasksScreen> {
                                   );
                                 },
                               ),
-                        trailing: Text(data.body[index].deadline),
+                        trailing: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Builder(builder: (context) {
+                              if (data.body[index].waitlistNum == -1) {
+                                return const Text("-",
+                                    style: TextStyle(fontSize: 18));
+                              } else {
+                                return Text(
+                                    (data.body[index].waitlistNum + 1)
+                                        .toString(),
+                                    style: const TextStyle(fontSize: 18));
+                              }
+                            }),
+                            Text(data.body[index].deadline),
+                          ],
+                        ),
                       ),
                     ),
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return Container(
-                            height: 200,
-                            width: MediaQuery.sizeOf(context).width,
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(data.body[index].title),
-                                Text(data.body[index].deadline),
-                                Text(data.body[index].waitlistNum.toString()),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
                   );
                 },
               );
