@@ -28,14 +28,16 @@ class _HomeScreensState extends State<HomeScreens> {
             _selectedIndex = index;
           });
         },
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'ホーム',
+            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.format_list_numbered),
-            label: 'やる順',
+            label: '',
           ),
         ],
         type: BottomNavigationBarType.fixed,

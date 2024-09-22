@@ -13,6 +13,7 @@ class _YarujunScreenState extends State<YarujunScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('やる順 Todo'),
+        automaticallyImplyLeading: false,
       ),
       body: const Center(
         child: Text('やる順 Todo'),

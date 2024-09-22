@@ -15,6 +15,11 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
+  DateTime _taskDate = new DateTime.now();
+  final _formKey = GlobalKey<FormState>();
+
+  String _taskTitle = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,7 +96,121 @@ class _TasksScreenState extends State<TasksScreen> {
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return Container(
+                height: 300 + MediaQuery.of(context).viewInsets.bottom,
+                width: MediaQuery.sizeOf(context).width,
+                padding: const EdgeInsets.only(top: 2, left: 16, right: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'タスク名を入力してください。';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _taskTitle = value!;
+                        },
+                        decoration: InputDecoration(
+                          hintText: '何をしますか？',
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              print("pressed");
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                if (_taskTitle != "") {
+                                  postTask().then(
+                                    (value) {
+                                      if (value.statusCode != 200) {
+                                        if (value.statusCode == 401) {
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback(
+                                            (_) {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoginScreen()),
+                                              );
+                                            },
+                                          );
+                                          return const Center(
+                                              child: Text("Unauthorized"));
+                                        } else {
+                                          return const Center(
+                                              child: Text("Error"));
+                                        }
+                                      } else {
+                                        setState(() {});
+                                      }
+                                    },
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('タスク名を入力してください。'),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            icon: const Icon(Icons.send),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          child: Row(
+                            children: [
+                              Icon(Icons.calendar_month),
+                              Text(" ${_taskDate.month}/${_taskDate.day}"),
+                            ],
+                          ),
+                          onPressed: () {
+                            onPressedRaisedButton();
+                          },
+                        ),
+                        ElevatedButton(
+                            onPressed: () {},
+                            child: Icon(Icons.format_list_numbered)),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
+  }
+
+// ボタン押下時のイベント
+  void onPressedRaisedButton() async {
+    final picked = await showDatePicker(
+            context: context,
+            initialDate: _taskDate,
+            firstDate: new DateTime(2018),
+            lastDate: new DateTime.now().add(new Duration(days: 360)))
+        .then((value) {
+      if (value != null) {
+        setState(() {
+          _taskDate = value;
+        });
+      }
+    });
   }
 
   Future<ApiReturn> getTaskList() async {
@@ -134,6 +253,53 @@ class _TasksScreenState extends State<TasksScreen> {
       return ApiReturn(statusCode: 401, body: "Unauthorized");
     } else {
       return ApiReturn(statusCode: response.statusCode, body: "Error");
+    }
+  }
+
+  Future<ApiReturn> postTask() async {
+    if (Token == "") {
+      return ApiReturn(statusCode: 401, body: "Token is empty");
+    }
+
+    if (UserID == "") {
+      await getUserId().then((value) {
+        if (value.statusCode == 200) {
+          UserID = value.body;
+        } else if (value.statusCode == 401) {
+          return ApiReturn(statusCode: 401, body: "Token is empty");
+        } else {
+          return ApiReturn(statusCode: value.statusCode, body: "Error");
+        }
+      });
+    }
+
+    final query = {
+      'user_id': UserID,
+    };
+    final header = <String, String>{
+      'Authorization': 'Bearer $Token',
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode(<String, dynamic>{
+      'title': _taskTitle,
+      'memo': "test",
+      'deadline':
+          "${_taskDate.year}-${_taskDate.month}-${_taskDate.day}T00:00:00+9:00",
+      'waitlist_num': 3,
+    });
+    print(body);
+    final url = Uri.parse(
+        '$BaseURL/api/v1/auth/tasks?${Uri(queryParameters: query).query}');
+    final response = await http.post(url, body: body, headers: header);
+
+    print(url);
+    print(response.statusCode);
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return ApiReturn(statusCode: 200, body: "Success");
+    } else {
+      throw Exception('Failed to create task');
     }
   }
 }
